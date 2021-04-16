@@ -1,6 +1,7 @@
 package Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,5 +17,17 @@ public class NearbyFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_nearby, container, false);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i("NEARBY Fragment","On Stop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.i("NEARBY Fragment", "On Destroy View");
     }
 }

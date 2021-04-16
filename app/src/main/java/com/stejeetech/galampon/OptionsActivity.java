@@ -2,6 +2,7 @@ package com.stejeetech.galampon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -42,5 +43,18 @@ public class OptionsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("OPTIONS Activity","onStop invoked");
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("OPTIONS Activity","onDestroy invoked");
     }
 }

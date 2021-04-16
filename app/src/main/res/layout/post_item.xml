@@ -38,8 +38,26 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:text="username"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_margin="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="·"
+                android:textColor="@color/colorPrimaryDark"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/date"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="DD MMM YYYY"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="5dp" />
 
         </LinearLayout>
 
@@ -51,7 +69,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintDimensionRatio="1:1"
-                android:background="@layout/image_border"
                 android:id="@+id/post_image"
                 tools:ignore="MissingConstraints"
                 android:src="@mipmap/ic_launcher"
@@ -80,10 +97,10 @@
                 android:layout_marginLeft="3dp"
                 android:layout_toEndOf="@id/like"
                 android:layout_toRightOf="@id/like"
+                android:text="0"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/colorAccent"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textSize="22sp" />
 
             <ImageView
                 android:id="@+id/comment"
@@ -100,11 +117,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="3dp"
+                android:text="0"
                 android:layout_toEndOf="@+id/comment"
                 android:layout_toRightOf="@+id/comment"
                 android:textColor="@color/colorAccent"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textSize="22sp"/>
 
         </RelativeLayout>
 

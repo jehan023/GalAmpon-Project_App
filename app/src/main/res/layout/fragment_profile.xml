@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/top"
-                android:padding="15dp">
+                android:padding="10dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="90dp"
@@ -70,17 +70,18 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="90dp"
                     android:orientation="vertical"
                     android:paddingStart="20dp"
-                    android:paddingEnd="5dp"
                     android:paddingLeft="20dp"
+                    android:paddingEnd="5dp"
                     android:paddingRight="5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:id="@+id/post_count"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -89,31 +90,31 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/posts"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/posts"
-                                android:textColor="@color/colorPrimaryDark"
                                 android:layout_gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="20sp"/>
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:text="SHARED POSTS"/>
+                                android:text="SHARED POSTS"
+                                android:textSize="14sp" />
 
                         </LinearLayout>
 
                     </LinearLayout>
 
                     <Button
+                        android:id="@+id/edit_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="2dp"
                         android:layout_marginTop="5dp"
-                        android:text="EDIT PROFILE"
-                        android:id="@+id/edit_profile"/>
+                        android:padding="2dp"
+                        android:text="EDIT PROFILE" />
 
                 </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.stejeetech.galampon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -50,5 +51,18 @@ public class StartActivity extends AppCompatActivity {
             startActivity(new Intent(StartActivity.this , MainActivity.class));
             finish();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("START Activity","onStop invoked");
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("START Activity","onDestroy invoked");
     }
 }

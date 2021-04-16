@@ -3,6 +3,7 @@ package com.stejeetech.galampon;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -10,8 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -97,6 +98,19 @@ public class CommentActivity extends AppCompatActivity {
         });
 
         getComment();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Comment Activity","onStop invoked");
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Comment Activity","onDestroy invoked");
     }
 
     private void getComment() {

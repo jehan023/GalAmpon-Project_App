@@ -81,10 +81,11 @@ public class PostActivity extends AppCompatActivity {
         pd.show();
 
         if (imageUri != null){
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference("Posts").child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            final StorageReference filePath = FirebaseStorage.getInstance()
+                    .getReference("Posts").child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
 
-            StorageTask uploadtask = filePath.putFile(imageUri);
-            uploadtask.continueWithTask(new Continuation() {
+            StorageTask uploadTask = filePath.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation() {
                 @Override
                 public Object then(@NonNull Task task) throws Exception {
                     if (!task.isSuccessful()){
@@ -134,7 +135,7 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(this, "No image was selected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Image was selected!", Toast.LENGTH_SHORT).show();
         }
 
     }

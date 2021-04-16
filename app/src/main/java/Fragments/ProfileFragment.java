@@ -3,11 +3,13 @@ package Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +53,7 @@ public class ProfileFragment extends Fragment {
     private TextView name;
     private TextView bio;
     private TextView username;
+    private LinearLayout postCount;
 
     private ImageView myPictures;
     private ImageView likedPictures;
@@ -85,6 +88,7 @@ public class ProfileFragment extends Fragment {
         myPictures = view.findViewById(R.id.my_pictures);
         likedPictures = view.findViewById(R.id.saved_pictures);
         editProfile = view.findViewById(R.id.edit_profile);
+        postCount = view.findViewById(R.id.post_count);
 
         recyclerView = view.findViewById(R.id.recycler_view_pictures);
         recyclerView.setHasFixedSize(true);
@@ -109,6 +113,7 @@ public class ProfileFragment extends Fragment {
             editProfile.setVisibility(View.VISIBLE);
         } else {
             editProfile.setVisibility(View.INVISIBLE);
+            postCount.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         }
 
         editProfile.setOnClickListener(new View.OnClickListener() {
@@ -248,6 +253,8 @@ public class ProfileFragment extends Fragment {
 
     private void userInfo() {
 
+        Context context;
+
         FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,5 +272,21 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        final String TAG = "MyActivity";
+        Log.i(TAG,"On Stop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        final String TAG = "MyActivity";
+        Log.i(TAG, "On Destroy View");
     }
 }

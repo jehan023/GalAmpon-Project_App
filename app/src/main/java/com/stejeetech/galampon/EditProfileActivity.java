@@ -111,6 +111,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateProfile();
+                finish();
             }
         });
     }
