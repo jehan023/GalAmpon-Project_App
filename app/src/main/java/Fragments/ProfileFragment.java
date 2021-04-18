@@ -133,6 +133,8 @@ public class ProfileFragment extends Fragment {
         myPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myPictures.setBackgroundColor(getResources().getColor(R.color.colorGrey));
+                likedPictures.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerViewLiked.setVisibility(View.GONE);
             }
@@ -141,6 +143,8 @@ public class ProfileFragment extends Fragment {
         likedPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myPictures.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                likedPictures.setBackgroundColor(getResources().getColor(R.color.colorGrey));
                 recyclerView.setVisibility(View.GONE);
                 recyclerViewLiked.setVisibility(View.VISIBLE);
             }
@@ -191,7 +195,6 @@ public class ProfileFragment extends Fragment {
 
                     }
                 });
-
             }
 
             @Override
@@ -253,7 +256,7 @@ public class ProfileFragment extends Fragment {
 
     private void userInfo() {
 
-        Context context;
+        Context context = null;
 
         FirebaseDatabase.getInstance().getReference().child("Users").child(profileId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -261,7 +264,7 @@ public class ProfileFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
 
                 Picasso.get().load(user.getImageurl()).into(imageProfile);
-                username.setText(user.getUsername());
+                username.setText("@"+ user.getUsername());
                 name.setText(user.getName());
                 bio.setText(user.getBio());
             }
@@ -271,10 +274,7 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
     }
-
-
 
     @Override
     public void onStop() {

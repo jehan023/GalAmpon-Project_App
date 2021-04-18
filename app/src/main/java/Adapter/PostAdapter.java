@@ -25,7 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hendraanggrian.appcompat.widget.SocialTextView;
-import com.squareup.picasso.Picasso;
 import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.R;
 
@@ -75,9 +74,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 User user = dataSnapshot.getValue(User.class);
 
                 if (user.getImageurl().equals("default")){
-                    holder.imageProfile.setImageResource(R.mipmap.ic_launcher);
+                    holder.imageProfile.setImageResource(R.mipmap.ic_launcher_round);
                 } else{
-                    Picasso.get().load(user.getImageurl()).into(holder.imageProfile);
+                    Glide.with(mContext).load(user.getImageurl()).into(holder.imageProfile);
                 }
                 holder.username.setText(user.getUsername());
                 holder.author.setText(user.getName());
@@ -203,10 +202,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.postImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
+                int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
 
-                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
+                if (fragCount < 1){
+                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
+
+                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
+                }
             }
         });
     }

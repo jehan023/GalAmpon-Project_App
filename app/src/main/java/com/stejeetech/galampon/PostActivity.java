@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
@@ -75,67 +76,71 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void upload() {
+        if (!TextUtils.isEmpty(description.getText().toString())){
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Uploading");
+            pd.show();
 
-        final ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("Uploading");
-        pd.show();
+            if (imageUri != null){
+                final StorageReference filePath = FirebaseStorage.getInstance()
+                        .getReference("Posts").child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
 
-        if (imageUri != null){
-            final StorageReference filePath = FirebaseStorage.getInstance()
-                    .getReference("Posts").child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
-
-            StorageTask uploadTask = filePath.putFile(imageUri);
-            uploadTask.continueWithTask(new Continuation() {
-                @Override
-                public Object then(@NonNull Task task) throws Exception {
-                    if (!task.isSuccessful()){
-                        throw task.getException();
-                    }
-
-                    return filePath.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    Uri downloadUri = task.getResult();
-                    imageUrl = downloadUri.toString();
-
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                    String postId = ref.push().getKey();
-
-                    HashMap<String , Object> map = new HashMap<>();
-                    map.put("postid" , postId);
-                    map.put("imageurl" , imageUrl);
-                    map.put("description" , description.getText().toString());
-                    map.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                    ref.child(postId).setValue(map);
-
-                    DatabaseReference mHashTagRef = FirebaseDatabase.getInstance().getReference().child("HashTags");
-                    List<String> hashTags = description.getHashtags();
-                    if (!hashTags.isEmpty()){
-                        for (String tag : hashTags){
-                            map.clear();
-
-                            map.put("tag" , tag.toLowerCase());
-                            map.put("postid" , postId);
-
-                            mHashTagRef.child(tag.toLowerCase()).child(postId).setValue(map);
+                StorageTask uploadTask = filePath.putFile(imageUri);
+                uploadTask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception {
+                        if (!task.isSuccessful()){
+                            throw task.getException();
                         }
-                    }
 
-                    pd.dismiss();
-                    startActivity(new Intent(PostActivity.this , MainActivity.class));
-                    finish();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(this, "No Image was selected!", Toast.LENGTH_SHORT).show();
+                        return filePath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        Uri downloadUri = task.getResult();
+                        imageUrl = downloadUri.toString();
+
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                        String postId = ref.push().getKey();
+
+                        HashMap<String , Object> map = new HashMap<>();
+                        map.put("postid" , postId);
+                        map.put("imageurl" , imageUrl);
+                        map.put("description" , description.getText().toString());
+                        map.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                        ref.child(postId).setValue(map);
+
+                        DatabaseReference mHashTagRef = FirebaseDatabase.getInstance().getReference().child("HashTags");
+                        List<String> hashTags = description.getHashtags();
+                        if (!hashTags.isEmpty()){
+                            for (String tag : hashTags){
+                                map.clear();
+
+                                map.put("tag" , tag.toLowerCase());
+                                map.put("postid" , postId);
+
+                                mHashTagRef.child(tag.toLowerCase()).child(postId).setValue(map);
+                            }
+                        }
+
+                        pd.dismiss();
+                        startActivity(new Intent(PostActivity.this , MainActivity.class));
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "No Image was selected!", Toast.LENGTH_SHORT).show();
+            }
+        } else{
+            Toast.makeText(PostActivity.this, "Empty description not allowed!",
+            Toast.LENGTH_SHORT).show();
         }
 
     }

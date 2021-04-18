@@ -10,6 +10,6 @@
         android:id="@+id/post_image"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@drawable/ic_loading"/>
 
 </RelativeLayout>

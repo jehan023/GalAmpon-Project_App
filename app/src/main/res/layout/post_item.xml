@@ -71,7 +71,7 @@
                 app:layout_constraintDimensionRatio="1:1"
                 android:id="@+id/post_image"
                 tools:ignore="MissingConstraints"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/ic_loading"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"/>
 

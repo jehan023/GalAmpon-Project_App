@@ -24,7 +24,7 @@
             android:id="@+id/bottom_navigation"
             app:itemIconTint="@color/selector"
             app:labelVisibilityMode="unlabeled"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/colorBlack"
             app:menu="@menu/bottom_menu"/>
 
 

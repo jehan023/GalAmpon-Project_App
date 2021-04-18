@@ -2,6 +2,7 @@ package com.stejeetech.galampon;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,12 +26,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText name;
     private EditText email;
     private EditText password;
+    private EditText rePassword;
     private Button register;
     private TextView loginUser;
 
@@ -46,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
+        rePassword = findViewById(R.id.rePassword);
         register = findViewById(R.id.register);
         loginUser = findViewById(R.id.login_user);
 
@@ -61,20 +66,25 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         register.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 String txtUsername = username.getText().toString();
                 String txtName = name.getText().toString();
                 String txtEmail = email.getText().toString();
                 String txtPassword = password.getText().toString();
+                String txtRePassword = rePassword.getText().toString();
 
                 if (TextUtils.isEmpty(txtUsername) || TextUtils.isEmpty(txtName)
-                        || TextUtils.isEmpty(txtEmail) || TextUtils.isEmpty(txtPassword)){
+                        || TextUtils.isEmpty(txtEmail) || TextUtils.isEmpty(txtPassword) || TextUtils.isEmpty(txtRePassword)){
                     Toast.makeText(RegisterActivity.this, "Empty credentials!", Toast.LENGTH_SHORT).show();
-                } else if (txtPassword.length() < 6){
+                } else if (txtRePassword.length() < 6) {
                     Toast.makeText(RegisterActivity.this, "Password too short!", Toast.LENGTH_SHORT).show();
+                } else if (!Objects.equals(txtPassword, txtRePassword)){
+                    Toast.makeText(RegisterActivity.this, "Password doesn't match!", Toast.LENGTH_SHORT).show();
+                    rePassword.setText("");
                 } else {
-                    registerUser(txtUsername , txtName , txtEmail , txtPassword);
+                    registerUser(txtUsername , txtName , txtEmail , txtRePassword);
                 }
             }
         });
