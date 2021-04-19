@@ -28,6 +28,7 @@ import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.R;
 
+import java.util.HashMap;
 import java.util.List;
 
 import Fragments.PostDetailFragment;
@@ -135,7 +136,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     FirebaseDatabase.getInstance().getReference().child("LikedByUser")
                             .child(firebaseUser.getUid()).child(post.getPostid()).setValue(true);
 
-                    //addNotification(post.getPostid(), post.getPublisher());
+                    addNotification(post.getPostid(), post.getPublisher());
 
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Likes")
@@ -297,6 +298,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
+    }
+
+    private void addNotification(String postId, String publisherId) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("userid", publisherId);
+        map.put("text", "liked your post.");
+        map.put("postid", postId);
+        map.put("isPost", true);
+
+        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).push().setValue(map);
     }
 
 }

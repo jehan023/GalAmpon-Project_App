@@ -161,6 +161,8 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
 
+        addNotification(ref.getKey(), fUser.getUid());
+
     }
 
     private void getUserImage() {
@@ -181,6 +183,16 @@ public class CommentActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    private void addNotification(String postId, String publisherId) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("userid", publisherId);
+        map.put("text", "comment on your post.");
+        map.put("postid", postId);
+        map.put("isPost", true);
+
+        FirebaseDatabase.getInstance().getReference().child("Notifications").child(fUser.getUid()).push().setValue(map);
     }
 }

@@ -1,10 +1,12 @@
 package com.stejeetech.galampon;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +14,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class OptionsActivity extends AppCompatActivity {
+
+    Context context;
 
     private TextView settings;
     private TextView logOut;
@@ -39,6 +43,8 @@ public class OptionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
+                finishAffinity();
+                Toast.makeText(OptionsActivity.this, "Signed out.", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(OptionsActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
             }

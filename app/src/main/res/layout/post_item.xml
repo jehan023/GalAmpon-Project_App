@@ -55,7 +55,7 @@
                 android:id="@+id/date"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp"
-                android:text="DD MMM YYYY"
+                android:text="Date"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_margin="5dp" />
 
@@ -142,8 +142,18 @@
             android:textColor="@color/colorPrimaryDark"
             android:id="@+id/description"
             android:text="Test Description"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:id="@+id/location"
+            android:text="- at Location"
+            android:textColor="@color/colorPrimary"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="10dp" />
 
 
 

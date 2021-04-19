@@ -7,16 +7,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.stejeetech.galampon.R;
 
+import java.util.List;
+
+import Adapter.NearbyAdapter;
+import Model.Post;
+
 public class NearbyFragment extends Fragment {
+
+    private RecyclerView recyclerViewPosts;
+    private NearbyAdapter nearbyAdapter;
+    private List<Post> postList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nearby, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+
+        return view;
     }
 
     @Override

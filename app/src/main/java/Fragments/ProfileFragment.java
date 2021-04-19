@@ -127,6 +127,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        myPictures.setBackgroundColor(getResources().getColor(R.color.colorGrey));
+        likedPictures.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
         recyclerView.setVisibility(View.VISIBLE);
         recyclerViewLiked.setVisibility(View.GONE);
 

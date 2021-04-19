@@ -45,7 +45,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                 //mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
                 int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
 
-                if (fragCount < 1){
+                if (fragCount < 8){
                     mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
 
                     ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()

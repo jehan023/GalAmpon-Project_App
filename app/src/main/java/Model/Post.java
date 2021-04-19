@@ -6,6 +6,9 @@ public class Post {
     private String postid;
     private String publisher;
 
+    // Location
+    // Time
+
     public Post() {
     }
 

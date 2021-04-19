@@ -69,6 +69,8 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate();
+                onDestroy();
+                Log.i("Post detail fragment", "DESTROYED");
             }
         });
 
