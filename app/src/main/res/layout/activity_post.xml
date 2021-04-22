@@ -60,9 +60,8 @@
             android:layout_height="330dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintDimensionRatio="1:1" />
+            android:scaleType="fitCenter"
+            app:layout_constraintDimensionRatio="1:1"/>
 
         <com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView
             android:id="@+id/description"

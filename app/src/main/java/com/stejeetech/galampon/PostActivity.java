@@ -2,8 +2,10 @@ package com.stejeetech.galampon;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -32,8 +34,8 @@ import com.google.firebase.storage.StorageTask;
 import com.hendraanggrian.appcompat.socialview.Hashtag;
 import com.hendraanggrian.appcompat.widget.HashtagArrayAdapter;
 import com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView;
-import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class PostActivity extends AppCompatActivity {
 
     private Uri imageUri;
     private String imageUrl;
+    private final int PICK_IMAGE_REQUEST = 71;
 
     private ImageView close;
     private ImageView imageAdded;
@@ -68,15 +71,28 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                upload();
+                if (imageUri != null) {
+                    upload();
+                } else{
+                    Toast.makeText(PostActivity.this, "Please select an image.", Toast.LENGTH_SHORT).show();
+                    selectImage();
+                }
             }
         });
 
-        CropImage.activity().start(PostActivity.this);
+        //CropImage.activity().start(PostActivity.this);
+        selectImage();
+    }
+
+    private void selectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
     private void upload() {
-        if (!TextUtils.isEmpty(description.getText().toString())){
+        if ((!TextUtils.isEmpty(description.getText().toString())) && (imageAdded != null)) {
             final ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Uploading");
             pd.show();
@@ -139,8 +155,7 @@ public class PostActivity extends AppCompatActivity {
                 Toast.makeText(this, "No Image was selected!", Toast.LENGTH_SHORT).show();
             }
         } else{
-            Toast.makeText(PostActivity.this, "Empty description not allowed!",
-            Toast.LENGTH_SHORT).show();
+            Toast.makeText(PostActivity.this, "Empty description not allowed!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -155,17 +170,34 @@ public class PostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            imageUri = result.getUri();
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                imageAdded.setImageBitmap(bitmap);
+            }
+            catch (IOException e)
+            {
+                Toast.makeText(this, "Try again!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(PostActivity.this , MainActivity.class));
+                finish();
+            }
+        }
 
-            imageAdded.setImageURI(imageUri);
+        /*if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        imageUri = result.getUri();
+
+        imageAdded.setImageURI(imageUri);
         } else {
             Toast.makeText(this, "Try again!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(PostActivity.this , MainActivity.class));
             finish();
-        }
+        }*/
     }
+
 
     @Override
     protected void onStart() {

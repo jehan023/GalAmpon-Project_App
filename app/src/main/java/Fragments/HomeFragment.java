@@ -5,9 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +28,8 @@ import Model.Post;
 
 public class HomeFragment extends Fragment {
 
+    private ImageView notificationBell;
+
     private RecyclerView recyclerViewPosts;
     private PostAdapter postAdapter;
     private List<Post> postList;
@@ -34,6 +39,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        notificationBell = view.findViewById(R.id.notification_bell);
 
         recyclerViewPosts = view.findViewById(R.id.recycler_view_posts);
         recyclerViewPosts.setHasFixedSize(true);
@@ -46,6 +53,16 @@ public class HomeFragment extends Fragment {
         recyclerViewPosts.setAdapter(postAdapter);
 
         readPost();
+
+        notificationBell.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.add(R.id.fragment_container, new NotificationFragment());
+                fragmentTransaction.addToBackStack(String.valueOf(new NotificationFragment())).commit();
+            }
+        });
 
         return view;
     }
