@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewImageActivity"
+    android:background="@color/colorBlack">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        app:tint="@color/colorWhite"
+        android:background="@color/colorBlack"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@id/bottom"
+        app:layout_constraintDimensionRatio="1:1"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_loading" />
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/like"
+            app:tint="@color/colorWhite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_like" />
+
+        <TextView
+            android:id="@+id/no_of_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="3dp"
+            android:layout_toEndOf="@id/like"
+            android:layout_toRightOf="@id/like"
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp" />
+
+        <ImageView
+            android:id="@+id/comment"
+            app:tint="@color/colorWhite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_comment" />
+
+        <TextView
+            android:id="@+id/no_of_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="3dp"
+            android:layout_toEndOf="@+id/comment"
+            android:layout_toRightOf="@+id/comment"
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

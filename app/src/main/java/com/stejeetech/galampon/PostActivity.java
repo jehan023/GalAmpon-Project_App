@@ -7,9 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,19 +38,33 @@ import com.hendraanggrian.appcompat.widget.HashtagArrayAdapter;
 import com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.ui.PlacePicker;
 
 public class PostActivity extends AppCompatActivity {
 
     private Uri imageUri;
     private String imageUrl;
     private final int PICK_IMAGE_REQUEST = 71;
+    private final int PLACE_PICKER_REQUEST = 1;
+
+    private double latitude, longitude;
 
     private ImageView close;
     private ImageView imageAdded;
     private TextView post;
+    private TextView addImage;
+    private TextView location;
+    private Button selectLocation;
+
     SocialAutoCompleteTextView description;
+    String currentDate = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +72,29 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         close = findViewById(R.id.close);
-        imageAdded = findViewById(R.id.image_added);
+        imageAdded = (ImageView) findViewById(R.id.image_added);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
+        location = findViewById(R.id.location);
+        selectLocation = findViewById(R.id.btnLocation);
+        addImage = findViewById(R.id.addImage);
+
+        //selectImage();
+
+        /*selectLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(PostActivity.this),PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
+
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +117,22 @@ public class PostActivity extends AppCompatActivity {
         });
 
         //CropImage.activity().start(PostActivity.this);
-        selectImage();
+
+        addImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImage();
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.i("PostActivity", "FINISH");
+        //startActivity(new Intent(PostActivity.this , MainActivity.class));
+        finish();
     }
 
     private void selectImage(){
@@ -125,6 +176,7 @@ public class PostActivity extends AppCompatActivity {
                         map.put("imageurl" , imageUrl);
                         map.put("description" , description.getText().toString());
                         map.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        map.put("date", currentDate);
 
                         ref.child(postId).setValue(map);
 
@@ -170,6 +222,15 @@ public class PostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        /*if(requestCode == PLACE_PICKER_REQUEST){
+            if(resultCode == RESULT_OK){
+                Place place = (Place) PlacePicker.getPlace(data, this);
+                latitude = place.getLatLng().latitude;
+                longitude = place.getLatLng().longitude;
+                location.setText(place.getAddress());
+            }
+        }*/
+
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
@@ -177,6 +238,7 @@ public class PostActivity extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 imageAdded.setImageBitmap(bitmap);
+                addImage.setText("Choose other image");
             }
             catch (IOException e)
             {

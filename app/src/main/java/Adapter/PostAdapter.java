@@ -3,9 +3,12 @@ package Adapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Outline;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,11 +30,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.R;
+import com.stejeetech.galampon.ViewImageActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-import Fragments.PostDetailFragment;
 import Fragments.ProfileFragment;
 import Model.Post;
 import Model.User;
@@ -39,6 +45,9 @@ import Model.User;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
+    private ImageView postImage;
+
+    String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     private FirebaseUser firebaseUser;
 
@@ -58,8 +67,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = mPosts.get(position);
-        Glide.with(mContext).load(post.getImageurl()).into(holder.postImage);
+        Glide.with(mContext).load(post.getImageurl()).placeholder(R.drawable.ic_loading).into(holder.postImage);
         holder.description.setText(post.getDescription());
+        holder.date.setText(post.getDate());
 
         FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
         if (post.getPublisher().equals(firebaseUser.getUid())){
@@ -80,7 +90,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     Glide.with(mContext).load(user.getImageurl()).into(holder.imageProfile);
                 }
                 holder.username.setText(user.getUsername());
-                holder.author.setText(user.getName());
+                //holder.author.setText(user.getName());
             }
 
             @Override
@@ -189,7 +199,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
-        holder.author.setOnClickListener(new View.OnClickListener() {
+        /*holder.author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
@@ -198,22 +208,28 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new ProfileFragment()).commit();
             }
-        });
+        });*/
 
         holder.postImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
+                /*int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
 
                 if (fragCount < 1){
                     mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
 
                     ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
-                }
+                }*/
+
+                Intent intent = new Intent(mContext, ViewImageActivity.class);
+                intent.putExtra("postId", post.getPostid());
+                intent.putExtra("authorId", post.getPublisher());
+                mContext.startActivity(intent);
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -230,6 +246,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public ImageView more;
 
         public TextView username;
+        public TextView date;
         public TextView noOfLikes;
         public TextView author;
         public TextView noOfComments;
@@ -245,10 +262,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             more = itemView.findViewById(R.id.more);
 
             username = itemView.findViewById(R.id.username);
+            date = itemView.findViewById(R.id.date);
             noOfLikes = itemView.findViewById(R.id.no_of_likes);
-            author = itemView.findViewById(R.id.author);
+            //author = itemView.findViewById(R.id.author);
             noOfComments = itemView.findViewById(R.id.no_of_comments);
             description = itemView.findViewById(R.id.description);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                ViewOutlineProvider provider = new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        int curveRadius = 24;
+                        outline.setRoundRect(0, 0, view.getWidth(), (view.getHeight()), curveRadius);
+                    }
+                };
+                postImage.setOutlineProvider(provider);
+                postImage.setClipToOutline(true);
+            }
         }
     }
 
@@ -303,12 +334,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private void addNotification(String postId, String publisherId) {
         HashMap<String, Object> map = new HashMap<>();
 
-        map.put("userid", publisherId);
+        map.put("userid", firebaseUser.getUid());
         map.put("text", "liked your post.");
         map.put("postid", postId);
+        map.put("datetime", currentDateTime);
         map.put("isPost", true);
 
-        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).push().setValue(map);
+        if (!firebaseUser.getUid().equals(publisherId)){
+            FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId).push().setValue(map);
+        }
     }
 
 }

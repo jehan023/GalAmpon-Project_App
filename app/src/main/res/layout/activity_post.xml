@@ -35,6 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="POST"
+                    android:textStyle="bold"
                     android:id="@+id/post"
                     android:textSize="18sp"
                     android:layout_alignParentEnd="true"
@@ -63,17 +64,51 @@
             android:scaleType="fitCenter"
             app:layout_constraintDimensionRatio="1:1"/>
 
+        <TextView
+            android:id="@+id/addImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Add Image"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary" />
+
         <com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
-            android:hint="Description..."
+            android:hint="Description"
             android:maxLines="5"
             app:hashtagColor="@color/colorPrimary"
             app:socialFlags="hashtag|mention" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/btnLocation"
+                android:layout_alignParentLeft="true"
+                android:hint="Location" />
+
+            <Button
+                android:id="@+id/btnLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:hint="Select Location" />
+        </RelativeLayout>
+
+
 
     </LinearLayout>
 

@@ -61,6 +61,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         final Comment comment = mComments.get(position);
 
         holder.comment.setText(comment.getComment());
+        holder.datetime.setText(comment.getDatetime());
 
         FirebaseDatabase.getInstance().getReference().child("Users").child(comment.getPublisher()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -146,6 +147,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         public CircleImageView imageProfile;
         public TextView username;
         public TextView comment;
+        public TextView datetime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -153,6 +155,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             imageProfile = itemView.findViewById(R.id.image_profile);
             username = itemView.findViewById(R.id.username);
             comment = itemView.findViewById(R.id.comment);
+            datetime = itemView.findViewById(R.id.datetime);
         }
     }
 

@@ -4,15 +4,17 @@ public class Notification {
     private String userid;
     private String text;
     private String postid;
+    private String datetime;
     private boolean isPost;
 
     public Notification() {
     }
 
-    public Notification(String userid, String text, String postid, boolean isPost) {
+    public Notification(String userid, String text, String postid, String datetime, boolean isPost) {
         this.userid = userid;
         this.text = text;
         this.postid = postid;
+        this.datetime = datetime;
         this.isPost = isPost;
     }
 
@@ -39,6 +41,10 @@ public class Notification {
     public void setPostid(String postid) {
         this.postid = postid;
     }
+
+    public String getDatetime() { return datetime; }
+
+    public void setDatetime(String datetime) { this.datetime = datetime; }
 
     public boolean isIsPost() {
         return isPost;

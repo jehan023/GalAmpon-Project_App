@@ -80,12 +80,12 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("POST DETAIL Fragment","On Stop");
+        Log.i("PostDetailFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i("POST DETAIL Fragment", "On Destroy View");
+        Log.i("PostDetailFragment", "ON DESTROY VIEW");
     }
 }

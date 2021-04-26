@@ -5,18 +5,19 @@ public class Post {
     private String imageurl;
     private String postid;
     private String publisher;
+    private String date;
 
-    // Location
-    // Time
+    // insert Location
 
     public Post() {
     }
 
-    public Post(String description, String imageurl, String postid, String publisher) {
+    public Post(String description, String imageurl, String postid, String publisher, String date) {
         this.description = description;
         this.imageurl = imageurl;
         this.postid = postid;
         this.publisher = publisher;
+        this.date = date;
     }
 
     public String getDescription() {
@@ -50,4 +51,18 @@ public class Post {
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+
+
+
+
+
 }

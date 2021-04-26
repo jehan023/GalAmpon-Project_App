@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- ToolBar -->
+    <style name="ToolBarTheme.ToolBarStyle"    parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorPrimaryInverse">@color/colorWhite</item>
+    </style>
+
 </resources>

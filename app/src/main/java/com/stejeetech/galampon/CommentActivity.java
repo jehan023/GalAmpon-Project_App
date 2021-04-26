@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,11 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import Adapter.CommentAdapter;
 import Model.Comment;
@@ -46,6 +49,8 @@ public class CommentActivity extends AppCompatActivity {
 
     private String postId;
     private String authorId;
+
+    String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     FirebaseUser fUser;
 
@@ -147,6 +152,7 @@ public class CommentActivity extends AppCompatActivity {
         map.put("id", id);
         map.put("comment", addComment.getText().toString());
         map.put("publisher", fUser.getUid());
+        map.put("datetime", currentDateTime);
 
         addComment.setText("");
 
@@ -174,7 +180,7 @@ public class CommentActivity extends AppCompatActivity {
                 if (user.getImageurl().equals("default")) {
                     imageProfile.setImageResource(R.mipmap.ic_launcher);
                 } else {
-                    Picasso.get().load(user.getImageurl()).into(imageProfile);
+                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(imageProfile);
                 }
             }
 
@@ -191,8 +197,11 @@ public class CommentActivity extends AppCompatActivity {
         map.put("userid", publisherId);
         map.put("text", "comment on your post.");
         map.put("postid", postId);
+        map.put("datetime", currentDateTime);
         map.put("isPost", true);
 
-        FirebaseDatabase.getInstance().getReference().child("Notifications").child(fUser.getUid()).push().setValue(map);
+        if(!publisherId.equals(authorId)){
+            FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).push().setValue(map);
+        }
     }
 }

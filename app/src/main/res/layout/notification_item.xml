@@ -24,19 +24,39 @@
         android:layout_marginLeft="5dp"
         android:layout_centerVertical="true">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/username"
-            android:text="username"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                android:id="@+id/username"
+                android:text="Username"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="·"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/datetime"
+                android:text="Date Time"/>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/comment"
-            android:text="comment"/>
+            android:text="comment on your post."/>
 
     </LinearLayout>
 
@@ -46,6 +66,7 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/post_image"
         android:src="@drawable/ic_loading"
+        android:scaleType="centerCrop"
         android:layout_alignParentRight="true" />
 
 </RelativeLayout>

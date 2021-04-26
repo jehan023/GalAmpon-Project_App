@@ -1,8 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PostActivity">
+    tools:context=".PostActivity"
+    android:background="@color/colorBlack">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="?android:attr/windowBackground">
+            android:background="@color/colorBlack"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -25,8 +28,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:text="Photo"
-                    android:textColor="@color/colorPrimaryDark"/>
+                    android:text="Post Detail"
+                    android:textColor="@color/colorWhite"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:id="@+id/close"
@@ -35,7 +38,8 @@
                     android:layout_marginRight="15dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    app:tint="@color/colorWhite" />
 
             </RelativeLayout>
 
@@ -45,7 +49,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/bar"
         android:id="@+id/recycler_view"/>
 

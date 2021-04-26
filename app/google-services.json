@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "688802103184",
+    "firebase_url": "https://galampon-default-rtdb.firebaseio.com",
     "project_id": "galampon",
     "storage_bucket": "galampon.appspot.com"
   },
@@ -20,7 +21,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDzapkf8GVn-bdiJhOt9tEMi5ctEEtuF2Y"
+          "current_key": "AIzaSyCUisley3m6vaU0DXdRn74JmnbBvtF9ppU"
         }
       ],
       "services": {
