@@ -98,7 +98,9 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/btnLocation"
                 android:layout_alignParentLeft="true"
-                android:hint="Location" />
+                android:text="Location"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/btnLocation" />
 
             <Button
                 android:id="@+id/btnLocation"

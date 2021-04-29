@@ -24,7 +24,12 @@
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCUisley3m6vaU0DXdRn74JmnbBvtF9ppU"/>
 
+        //add this in your application tag
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity android:name=".ViewImageActivity"/>
+        <activity android:name=".GoogleMapsActivity"/>
         <activity android:name=".OptionsActivity" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".CommentActivity" />

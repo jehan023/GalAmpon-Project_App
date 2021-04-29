@@ -5,16 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.stejeetech.galampon.MainActivity;
 import com.stejeetech.galampon.R;
 
 import java.util.ArrayList;
@@ -29,10 +27,17 @@ public class NearbyFragment extends Fragment {
     private NearbyAdapter nearbyAdapter;
     private List<Post> nearbyList;
 
+    private ImageView gps;
+    private TextView locationName;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby, container, false);
+
+        locationName = view.findViewById(R.id.locationInfo);
+        MainActivity main = (MainActivity) getActivity();
+        locationName.setText(main.getCurrentLocationName());
 
         recyclerViewNearby = view.findViewById(R.id.recycler_view_nearby);
         recyclerViewNearby.setHasFixedSize(true);
@@ -44,13 +49,22 @@ public class NearbyFragment extends Fragment {
         nearbyAdapter = new NearbyAdapter(getContext(), nearbyList);
         recyclerViewNearby.setAdapter(nearbyAdapter);
 
-        sortNearbyPost();
+        gps = view.findViewById(R.id.gps);
+        gps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                main.getLocation();
+                Log.i("LOCATION FETCHING", main.getCurrentLocationName());
+            }
+        });
 
+
+        /*sortNearbyPost();*/
 
         return view;
     }
 
-    private void sortNearbyPost() {
+    /*private void sortNearbyPost() {
         FirebaseDatabase.getInstance().getReference().child("Posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -68,7 +82,7 @@ public class NearbyFragment extends Fragment {
             }
             ;
         });
-    }
+    }*/
 
     @Override
     public void onStop() {
@@ -81,4 +95,6 @@ public class NearbyFragment extends Fragment {
         super.onDestroyView();
         Log.i("NEARBY Fragment", "On Destroy View");
     }
+
+ 
 }

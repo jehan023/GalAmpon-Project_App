@@ -44,9 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-//import com.google.android.gms.location.places.Place;
-//import com.google.android.gms.location.places.ui.PlacePicker;
-
 public class PostActivity extends AppCompatActivity {
 
     private Uri imageUri;
@@ -54,7 +51,8 @@ public class PostActivity extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 71;
     private final int PLACE_PICKER_REQUEST = 1;
 
-    private double latitude, longitude;
+    public Double latitude, longitude;
+    public String postLocation;
 
     private ImageView close;
     private ImageView imageAdded;
@@ -81,20 +79,20 @@ public class PostActivity extends AppCompatActivity {
 
         //selectImage();
 
-        /*selectLocation.setOnClickListener(new View.OnClickListener() {
+        selectLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(PostActivity.this),PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
+                //Choose location of the post
+                startActivity(new Intent(PostActivity.this, GoogleMapsActivity.class));
 
+            }
+        });
+
+        if (postLocation != null){
+            location.setText(postLocation);
+        } else{
+            location.setText("Null Location");
+        }
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,8 +113,6 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //CropImage.activity().start(PostActivity.this);
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +223,8 @@ public class PostActivity extends AppCompatActivity {
                 Place place = (Place) PlacePicker.getPlace(data, this);
                 latitude = place.getLatLng().latitude;
                 longitude = place.getLatLng().longitude;
-                location.setText(place.getAddress());
+                postLocation = (String) place.getAddress();
+                location.setText(postLocation);
             }
         }*/
 
@@ -247,17 +244,6 @@ public class PostActivity extends AppCompatActivity {
                 finish();
             }
         }
-
-        /*if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
-        CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        imageUri = result.getUri();
-
-        imageAdded.setImageURI(imageUri);
-        } else {
-            Toast.makeText(this, "Try again!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(PostActivity.this , MainActivity.class));
-            finish();
-        }*/
     }
 
 

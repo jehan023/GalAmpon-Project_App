@@ -4,65 +4,96 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bar"
-        android:background="?android:attr/windowBackground">
-
-        <androidx.appcompat.widget.Toolbar
+        android:orientation="vertical">
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/toolbar"
+            android:id="@+id/bar"
             android:background="?android:attr/windowBackground">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_location"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:id="@+id/nearby"
-                    android:layout_alignParentLeft="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="Nearby"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:layout_toEndOf="@+id/nearby"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_toRightOf="@+id/nearby" />
-
-            </RelativeLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
+            <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:id="@+id/recycler_view_nearby"/>
+                android:id="@+id/toolbar"
+                android:background="?android:attr/windowBackground">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Nearby"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_gps"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:id="@+id/gps"
+                        android:layout_alignParentRight="true" />
+
+                </RelativeLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_location"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/nearby"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Current Location"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlack"
+                android:textSize="15sp"
+                android:id="@+id/locationInfo"/>
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:id="@+id/recycler_view_nearby"/>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
 
 </RelativeLayout>
