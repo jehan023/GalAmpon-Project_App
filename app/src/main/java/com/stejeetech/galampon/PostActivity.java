@@ -51,15 +51,19 @@ public class PostActivity extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 71;
     private final int PLACE_PICKER_REQUEST = 1;
 
-    public Double latitude, longitude;
+    public Double postLatitude;
+    public Double postLongitude;
     public String postLocation;
 
     private ImageView close;
     private ImageView imageAdded;
     private TextView post;
     private TextView addImage;
-    private TextView location;
+    private TextView txtlocation;
     private Button selectLocation;
+
+    private TextView txtLatitude;
+    private TextView txtLongitude;
 
     SocialAutoCompleteTextView description;
     String currentDate = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date());
@@ -73,9 +77,12 @@ public class PostActivity extends AppCompatActivity {
         imageAdded = (ImageView) findViewById(R.id.image_added);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
-        location = findViewById(R.id.location);
+        txtlocation = findViewById(R.id.location);
         selectLocation = findViewById(R.id.btnLocation);
         addImage = findViewById(R.id.addImage);
+
+        txtLatitude = findViewById(R.id.postLatitude);
+        txtLongitude = findViewById(R.id.postLongitude);
 
         //selectImage();
 
@@ -83,16 +90,10 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Choose location of the post
-                startActivity(new Intent(PostActivity.this, GoogleMapsActivity.class));
-
+                Intent intent = new Intent(PostActivity.this, GoogleMapsActivity.class);
+                startActivityForResult(intent, PLACE_PICKER_REQUEST);
             }
         });
-
-        if (postLocation != null){
-            location.setText(postLocation);
-        } else{
-            location.setText("Null Location");
-        }
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +128,6 @@ public class PostActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Log.i("PostActivity", "FINISH");
-        //startActivity(new Intent(PostActivity.this , MainActivity.class));
         finish();
     }
 
@@ -139,7 +139,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void upload() {
-        if ((!TextUtils.isEmpty(description.getText().toString())) && (imageAdded != null)) {
+        if ((!TextUtils.isEmpty(description.getText().toString()))   && (!TextUtils.isEmpty(txtlocation.getText().toString()))) {
             final ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Uploading");
             pd.show();
@@ -172,6 +172,9 @@ public class PostActivity extends AppCompatActivity {
                         map.put("imageurl" , imageUrl);
                         map.put("description" , description.getText().toString());
                         map.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        map.put("postlocation", postLocation);
+                        map.put("postlatitude", postLatitude);
+                        map.put("postlongitude", postLongitude);
                         map.put("date", currentDate);
 
                         ref.child(postId).setValue(map);
@@ -203,7 +206,7 @@ public class PostActivity extends AppCompatActivity {
                 Toast.makeText(this, "No Image was selected!", Toast.LENGTH_SHORT).show();
             }
         } else{
-            Toast.makeText(PostActivity.this, "Empty description not allowed!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PostActivity.this, "Empty field not allowed!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -218,15 +221,20 @@ public class PostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        /*if(requestCode == PLACE_PICKER_REQUEST){
+        if(requestCode == PLACE_PICKER_REQUEST){
             if(resultCode == RESULT_OK){
-                Place place = (Place) PlacePicker.getPlace(data, this);
-                latitude = place.getLatLng().latitude;
-                longitude = place.getLatLng().longitude;
-                postLocation = (String) place.getAddress();
-                location.setText(postLocation);
+                if (data != null){
+                    postLocation = data.getStringExtra("pickedLocation");
+                    postLatitude = data.getDoubleExtra("pickedLat", 0.00000);
+                    postLongitude = data.getDoubleExtra("pickedLong", 0.00000);
+
+                    txtlocation.setText(postLocation);
+                    txtLatitude.setText("Lat: " + postLatitude.toString());
+                    txtLongitude.setText("Lng: " + postLongitude.toString());
+
+                }
             }
-        }*/
+        }
 
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null )

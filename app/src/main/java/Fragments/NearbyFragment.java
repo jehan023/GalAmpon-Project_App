@@ -5,13 +5,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.stejeetech.galampon.MainActivity;
 import com.stejeetech.galampon.R;
 
@@ -21,14 +29,21 @@ import java.util.List;
 import Adapter.NearbyAdapter;
 import Model.Post;
 
-public class NearbyFragment extends Fragment {
+public class NearbyFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
     private RecyclerView recyclerViewNearby;
     private NearbyAdapter nearbyAdapter;
     private List<Post> nearbyList;
 
+    private Double userLatitude;
+    private Double userLongitude;
+    private double range;
+
     private ImageView gps;
     private TextView locationName;
+
+    private Spinner spinner;
+    private static final String[] paths = {"1 kilometer","2 kilometers", "3 kilometers","5 kilometers","8 kilometers","10 kilometers"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +53,8 @@ public class NearbyFragment extends Fragment {
         locationName = view.findViewById(R.id.locationInfo);
         MainActivity main = (MainActivity) getActivity();
         locationName.setText(main.getCurrentLocationName());
+        userLatitude = main.getCurrentLatitude();
+        userLongitude = main.getCurrentLongitude();
 
         recyclerViewNearby = view.findViewById(R.id.recycler_view_nearby);
         recyclerViewNearby.setHasFixedSize(true);
@@ -49,29 +66,73 @@ public class NearbyFragment extends Fragment {
         nearbyAdapter = new NearbyAdapter(getContext(), nearbyList);
         recyclerViewNearby.setAdapter(nearbyAdapter);
 
+        spinner = (Spinner) view.findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, paths);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
         gps = view.findViewById(R.id.gps);
         gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                main.getLocation();
-                Log.i("LOCATION FETCHING", main.getCurrentLocationName());
+                main.checkPermission();
+                locationName.setText(main.getCurrentLocationName());
             }
         });
 
-
-        /*sortNearbyPost();*/
+        sortNearbyPost();
 
         return view;
     }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 
-    /*private void sortNearbyPost() {
+        switch (position) {
+            case 1:
+                range = 2.0;
+                sortNearbyPost();
+                break;
+            case 2:
+                range = 3.0;
+                sortNearbyPost();
+                break;
+            case 3:
+                range = 5.0;
+                sortNearbyPost();
+                break;
+            case 4:
+                range = 8.0;
+                sortNearbyPost();
+                break;
+            case 5:
+                range = 10.0;
+                sortNearbyPost();
+                break;
+            case 0:
+            default:
+                range = 1.0;
+                sortNearbyPost();
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // TODO Auto-generated method stub
+    }
+
+    private void sortNearbyPost() {
         FirebaseDatabase.getInstance().getReference().child("Posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 nearbyList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    nearbyList.add(post);
+                    if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= (double) range){
+                        nearbyList.add(post);
+                    }
                 }
                 nearbyAdapter.notifyDataSetChanged();
             }
@@ -82,7 +143,25 @@ public class NearbyFragment extends Fragment {
             }
             ;
         });
-    }*/
+    }
+
+    public double CalculationByDistance(double userLatitude, double userLongitude,
+                                        double postLat, double postLong){
+        int R = 6371; // km (Earth radius)
+        double dLat = toRadians(postLat - userLatitude);
+        double dLon = toRadians(postLong - userLongitude);
+        userLatitude = toRadians(userLatitude);
+        postLat = toRadians(postLat);
+
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(userLatitude) * Math.cos(postLat);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return (double) R * c;
+    }
+
+    public double toRadians(double deg) {
+        return deg * (Math.PI/180);
+    }
 
     @Override
     public void onStop() {
@@ -95,6 +174,4 @@ public class NearbyFragment extends Fragment {
         super.onDestroyView();
         Log.i("NEARBY Fragment", "On Destroy View");
     }
-
- 
 }

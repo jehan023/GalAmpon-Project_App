@@ -88,19 +88,21 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="10dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_location"
                 android:layout_toLeftOf="@id/btnLocation"
                 android:layout_alignParentLeft="true"
-                android:text="Location"
+                android:hint="Location"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/btnLocation" />
+                android:layout_toStartOf="@id/btnLocation"
+                android:drawableLeft="@drawable/ic_location" />
 
             <Button
                 android:id="@+id/btnLocation"
@@ -109,6 +111,23 @@
                 android:layout_alignParentRight="true"
                 android:hint="Select Location" />
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/postLatitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"
+            android:hint="Latitude:" />
+        <TextView
+            android:id="@+id/postLongitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"
+            android:hint="Longitude:" />
 
 
 

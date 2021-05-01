@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -26,7 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
-        <com.skyfishjy.library.RippleBackground xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.skyfishjy.library.RippleBackground
+            xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/content"
             android:layout_width="100dp"
@@ -75,21 +77,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your location"
+                android:text="Picked location"
                 android:textColor="@color/colorAccent" />
-            <TextView
-                android:id="@+id/id_tv_change"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Change"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="16dp"
-                android:layout_alignParentRight="true" />
+
         </RelativeLayout>
         <TextView
             android:id="@+id/dragg_result"
@@ -114,7 +104,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/colorPrimary"
-            android:text="Save and Proceed"
+            android:text="Confirm Location"
             android:textAllCaps="false"
             android:textColor="@color/colorWhite" />
     </LinearLayout>

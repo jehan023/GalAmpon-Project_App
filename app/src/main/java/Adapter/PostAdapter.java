@@ -70,6 +70,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Glide.with(mContext).load(post.getImageurl()).placeholder(R.drawable.ic_loading).into(holder.postImage);
         holder.description.setText(post.getDescription());
         holder.date.setText(post.getDate());
+        holder.location.setText("- at " + post.getPostlocation());
 
         FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
         if (post.getPublisher().equals(firebaseUser.getUid())){
@@ -250,6 +251,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public TextView noOfLikes;
         public TextView author;
         public TextView noOfComments;
+        public TextView location;
         SocialTextView description;
 
         public ViewHolder(@NonNull View itemView) {
@@ -267,6 +269,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             //author = itemView.findViewById(R.id.author);
             noOfComments = itemView.findViewById(R.id.no_of_comments);
             description = itemView.findViewById(R.id.description);
+            location = itemView.findViewById(R.id.location);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 

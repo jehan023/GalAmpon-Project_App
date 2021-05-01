@@ -51,21 +51,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public static int map_to_addsignup = 0;
     SupportMapFragment mapFragment;
     CameraPosition cameraPosition;
-    String longitude, latitude;
-    public Double lat;
-    public Double lan;
+    public Double longitude, latitude;
     public String locality;
 
-    public String pickLocation;
-
-    String country;
-    String state;
-    String sub_admin;
-    String city;
-    String pincode;
-    String locality_city;
-    String sub_localoty;
-    String country_code;
+    public String country;
+    public String state;
+    public String sub_admin;
+    public String city;
+    public String pincode;
+    public String locality_city;
+    public String sub_localoty;
+    public String country_code;
     FusedLocationProviderClient mFusedLocationProviderClient;
     RippleBackground content;
     // Animation
@@ -77,7 +73,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private boolean mRequestingLocationUpdates;
     private Button ic_save_proceed;
     private Context context;
-    private TextView id_tv_change;
+    //private TextView id_tv_change;
     private ImageView img_back, img_pin;
     //private RadarView radar_view;
     private ProgressBar pro_bar;
@@ -96,11 +92,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 @Override
                 public void onClick(View view) {
                     try {
-                        //code
-                        pickLocation = resutText.getText().toString();
-                        PostActivity post = new PostActivity();
-                        post.postLocation = getPickLocation();
-                        Log.i("LOCATION POST", getPickLocation());
+                        //confirm location selected
+                        Intent intent = new Intent();
+                        intent.putExtra("pickedLocation", locality);
+                        intent.putExtra("pickedLat", latitude);
+                        intent.putExtra("pickedLong", longitude);
+                        setResult(RESULT_OK, intent);
                         finish();
 
                     } catch (Exception e) {
@@ -118,10 +115,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public String getPickLocation(){
-        return pickLocation;
     }
 
     private void configureCameraIdle() {
@@ -147,6 +140,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                             locality_city = addressList.get(0).getLocality();
                             sub_localoty = addressList.get(0).getSubLocality();
                             country_code = addressList.get(0).getCountryCode();
+                            latitude = addressList.get(0).getLatitude();
+                            longitude = addressList.get(0).getLongitude();
+
                             if (locality != null && country != null) {
                                 resutText.setText(locality + "");
                                 pro_bar.setVisibility(View.GONE);
@@ -198,7 +194,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             img_back = findViewById(R.id.img_back);
             resutText = findViewById(R.id.dragg_result);
             ic_save_proceed = findViewById(R.id.ic_save_proceed);
-            id_tv_change = findViewById(R.id.id_tv_change);
+            //id_tv_change = findViewById(R.id.id_tv_change);
             img_pin = findViewById(R.id.img_pin);
             content = findViewById(R.id.content);
             pro_bar = findViewById(R.id.pro_bar);

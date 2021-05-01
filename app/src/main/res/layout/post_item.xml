@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_more"
-        android:layout_margin="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/more"
         android:layout_alignParentRight="true" />
 
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/top"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="40dp"
@@ -38,7 +39,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -73,25 +76,26 @@
                         android:layout_marginLeft="5dp" />
 
                 </LinearLayout>
+
                 <com.hendraanggrian.appcompat.widget.SocialTextView
                     android:id="@+id/description"
-                    android:layout_width="344dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
-                    android:layout_marginRight="15dp"
                     android:layout_marginTop="3dp"
+                    android:layout_marginRight="5dp"
                     android:text="Test Description"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:id="@+id/location"
                     android:text="- at Location"
                     android:textColor="@color/colorPrimary"
                     android:layout_marginLeft="3dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="5dp"
                     android:layout_marginBottom="5dp" />
 
             </LinearLayout>
