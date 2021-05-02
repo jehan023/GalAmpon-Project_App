@@ -10,12 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,6 +37,7 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
     private RecyclerView recyclerViewNearby;
     private NearbyAdapter nearbyAdapter;
     private List<Post> nearbyList;
+    private FirebaseUser firebaseUser;
 
     private Double userLatitude;
     private Double userLongitude;
@@ -49,6 +53,7 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby, container, false);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         locationName = view.findViewById(R.id.locationInfo);
         MainActivity main = (MainActivity) getActivity();
@@ -78,6 +83,7 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
             @Override
             public void onClick(View v) {
                 main.checkPermission();
+                Toast.makeText(getContext(), "Current Location Fetching.", Toast.LENGTH_SHORT).show();
                 locationName.setText(main.getCurrentLocationName());
             }
         });
@@ -122,7 +128,7 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
     public void onNothingSelected(AdapterView<?> parent) {
         // TODO Auto-generated method stub
     }
-
+    
     private void sortNearbyPost() {
         FirebaseDatabase.getInstance().getReference().child("Posts").addValueEventListener(new ValueEventListener() {
             @Override
@@ -130,8 +136,10 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
                 nearbyList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= (double) range){
-                        nearbyList.add(post);
+                    if(!post.getPublisher().equals(firebaseUser.getUid())){
+                        if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= (double) range){
+                            nearbyList.add(post);
+                        }
                     }
                 }
                 nearbyAdapter.notifyDataSetChanged();
@@ -139,9 +147,8 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    //On Cancelled code
             }
-            ;
         });
     }
 

@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,10 +32,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private Context mContext;
     private List<Notification> mNotifications;
+    private FirebaseUser firebaseUser;
 
     public NotificationAdapter(Context mContext, List<Notification> mNotifications) {
         this.mContext = mContext;
         this.mNotifications = mNotifications;
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @NonNull
@@ -78,6 +82,39 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 }
             }
         });
+
+        /*holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setTitle("Do you want to delete this notification?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, int which) {
+                        FirebaseDatabase.getInstance().getReference().child("Notification")
+                                .child(firebaseUser.getUid()).child(notification.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(mContext, "Comment deleted successfully!", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+                        });
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alertDialog.show();
+
+            return true;
+            };
+        });*/
 
     }
 

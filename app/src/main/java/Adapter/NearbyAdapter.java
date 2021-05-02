@@ -39,7 +39,6 @@ public class NearbyAdapter extends RecyclerView.Adapter<NearbyAdapter.ViewHolder
     public NearbyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.nearby_item, parent, false);
 
-
         return new NearbyAdapter.ViewHolder(view);
     }
 
@@ -51,17 +50,13 @@ public class NearbyAdapter extends RecyclerView.Adapter<NearbyAdapter.ViewHolder
         holder.date.setText(post.getDate());
         holder.location.setText(post.getPostlocation());
 
-        holder.postImage.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
+                mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
 
-                if (fragCount < 1){
-                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
-
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
-                }
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
             }
         });
     }

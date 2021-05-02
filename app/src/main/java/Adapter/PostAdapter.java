@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hendraanggrian.appcompat.widget.SocialTextView;
@@ -45,7 +47,9 @@ import Model.User;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
-    private ImageView postImage;
+    int notifId = 0;
+    boolean exist = false;
+    int updateNotifId;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -91,12 +95,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     Glide.with(mContext).load(user.getImageurl()).into(holder.imageProfile);
                 }
                 holder.username.setText(user.getUsername());
-                //holder.author.setText(user.getName());
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // code here
             }
         });
 
@@ -200,29 +203,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
-        /*holder.author.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
-                        .edit().putString("profileId", post.getPublisher()).apply();
-
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment()).commit();
-            }
-        });*/
-
         holder.postImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
-
-                if (fragCount < 1){
-                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
-
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
-                }*/
-
                 Intent intent = new Intent(mContext, ViewImageActivity.class);
                 intent.putExtra("postId", post.getPostid());
                 intent.putExtra("authorId", post.getPublisher());
@@ -231,12 +214,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
     }
 
-
     @Override
     public int getItemCount() {
         return mPosts.size();
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -249,7 +230,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public TextView username;
         public TextView date;
         public TextView noOfLikes;
-        public TextView author;
         public TextView noOfComments;
         public TextView location;
         SocialTextView description;
@@ -266,7 +246,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             username = itemView.findViewById(R.id.username);
             date = itemView.findViewById(R.id.date);
             noOfLikes = itemView.findViewById(R.id.no_of_likes);
-            //author = itemView.findViewById(R.id.author);
             noOfComments = itemView.findViewById(R.id.no_of_comments);
             description = itemView.findViewById(R.id.description);
             location = itemView.findViewById(R.id.location);
@@ -301,7 +280,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                // code here
             }
         });
     }
@@ -329,22 +308,36 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                // code here
             }
         });
     }
 
     private void addNotification(String postId, String publisherId) {
         HashMap<String, Object> map = new HashMap<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
 
-        map.put("userid", firebaseUser.getUid());
-        map.put("text", "liked your post.");
-        map.put("postid", postId);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                notifId = (int) snapshot.getChildrenCount();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // code here
+            }
+        });
+
+        map.put("notifid", notifId);
+        map.put("userid", firebaseUser.getUid());//
+        map.put("text", "liked your post.");//
+        map.put("postid", postId);//
         map.put("datetime", currentDateTime);
         map.put("isPost", true);
 
         if (!firebaseUser.getUid().equals(publisherId)){
-            FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId).push().setValue(map);
+            ref.child(String.valueOf(notifId)).setValue(map);
+            Log.i("INSERT DATA", String.valueOf(notifId));
         }
     }
 

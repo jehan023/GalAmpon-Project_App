@@ -49,6 +49,8 @@ public class CommentActivity extends AppCompatActivity {
 
     private String postId;
     private String authorId;
+    int notifId = 0;
+    int id = 0;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -147,7 +149,16 @@ public class CommentActivity extends AppCompatActivity {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
 
-        String id = ref.push().getKey();
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                id = (int) snapshot.getChildrenCount();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // code here
+            }
+        });
 
         map.put("id", id);
         map.put("comment", addComment.getText().toString());
@@ -156,7 +167,7 @@ public class CommentActivity extends AppCompatActivity {
 
         addComment.setText("");
 
-        ref.child(id).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        ref.child(String.valueOf(id)).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
@@ -194,6 +205,20 @@ public class CommentActivity extends AppCompatActivity {
     private void addNotification(String postId, String publisherId) {
         HashMap<String, Object> map = new HashMap<>();
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                notifId = (int) snapshot.getChildrenCount();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // code here
+            }
+        });
+
+        map.put("notifid", notifId);
         map.put("userid", publisherId);
         map.put("text", "comment on your post.");
         map.put("postid", postId);
@@ -201,7 +226,8 @@ public class CommentActivity extends AppCompatActivity {
         map.put("isPost", true);
 
         if(!publisherId.equals(authorId)){
-            FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).push().setValue(map);
+            //FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).push().setValue(map);
+            ref.child(String.valueOf(notifId)).setValue(map);
         }
     }
 }

@@ -1,6 +1,7 @@
 package Model;
 
 public class Notification {
+    private int notifid;
     private String userid;
     private String text;
     private String postid;
@@ -10,12 +11,21 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String userid, String text, String postid, String datetime, boolean isPost) {
+    public Notification(int notifid, String userid, String text, String postid, String datetime, boolean isPost) {
+        this.notifid = notifid;
         this.userid = userid;
         this.text = text;
         this.postid = postid;
         this.datetime = datetime;
         this.isPost = isPost;
+    }
+
+    public int getNotifid() {
+        return notifid;
+    }
+
+    public void setNotifid(int id) {
+        this.notifid = notifid;
     }
 
     public String getUserid() {
