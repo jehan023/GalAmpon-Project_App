@@ -1,13 +1,20 @@
 package com.stejeetech.galampon;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!isConnected(MainActivity.this)) {
+            //Toast.makeText(getApplicationContext(), "Please connect on Network.", Toast.LENGTH_SHORT).show();
+            buildDialog(MainActivity.this).show();
+        }
         setContentView(R.layout.activity_main);
 
         checkPermission();
@@ -56,24 +67,35 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
                     case R.id.nav_home:
+                        if(!isConnected(MainActivity.this)){
+                            Toast.makeText(getApplicationContext(), "Unavailable to load.", Toast.LENGTH_SHORT).show();
+                        }
                         selectorFragment = new HomeFragment();
                         break;
 
                     case R.id.nav_nearby:
+                        if(!isConnected(MainActivity.this)){
+                            Toast.makeText(getApplicationContext(), "Unavailable to load.", Toast.LENGTH_SHORT).show();
+                        }
                         selectorFragment = new NearbyFragment();
                         break;
 
                     case R.id.nav_add:
-                        selectorFragment = null;
-                        startActivity(new Intent(MainActivity.this, PostActivity.class));
+                        if(!isConnected(MainActivity.this)){
+                            Toast.makeText(getApplicationContext(), "Unavailable operation, Please connect on network.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            selectorFragment = null;
+                            startActivity(new Intent(MainActivity.this, PostActivity.class));
+                        }
                         break;
 
-
                     case R.id.nav_profile:
+                        if(!isConnected(MainActivity.this)){
+                            Toast.makeText(getApplicationContext(), "Unavailable to load.", Toast.LENGTH_SHORT).show();
+                        }
                         selectorFragment = new ProfileFragment();
                         break;
                 }
-
                 if (selectorFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectorFragment).commit();
                 }
@@ -118,13 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -145,6 +160,47 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else
+            return false;
+    }
+
+    public AlertDialog.Builder buildDialog(Context c) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setIcon(R.drawable.ic_nowifi);
+        builder.setTitle("No Internet Connection");
+
+        builder.setMessage("You need to have Mobile Data or wifi to access this.");
+        builder.setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
+        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        return builder;
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 
 }

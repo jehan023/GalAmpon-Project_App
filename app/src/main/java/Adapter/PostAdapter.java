@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.stejeetech.galampon.CommentActivity;
@@ -47,9 +48,9 @@ import Model.User;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
-    int notifId = 0;
+    String notifId;
     boolean exist = false;
-    int updateNotifId;
+    String existNotifId;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -113,7 +114,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
                 if (post.getPublisher().equals(firebaseUser.getUid())) {
                     AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                    alertDialog.setTitle("Do you want to delete?");
+                    alertDialog.setIcon(R.drawable.ic_delete);
+                    alertDialog.setTitle("Delete Post");
+                    alertDialog.setMessage("Do you want to delete?");
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
@@ -157,6 +160,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             .child(post.getPostid()).child(firebaseUser.getUid()).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("LikedByUser")
                             .child(firebaseUser.getUid()).child(post.getPostid()).removeValue();
+
+                    if(!post.getPublisher().equals(firebaseUser.getUid())){
+                        removeNotification(post.getPostid(), post.getPublisher(), firebaseUser.getUid(), "liked your post.");
+                    }
                 }
             }
         });
@@ -313,31 +320,54 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
     }
 
+    private void removeNotification (String postId, String publisherId, String userId, String content){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
+
+        Query query = ref.orderByChild("postid").equalTo(postId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        if(data.child("postid").exists() && data.child("userid").exists() && data.child("text").exists()) {
+                            if(data.child("postid").getValue().toString().equals(postId)
+                                    && data.child("userid").getValue().toString().equals(firebaseUser.getUid())
+                                    && data.child("text").getValue().toString().equals("liked your post.")) {
+                                existNotifId = data.getRef().getKey().toString();
+                                Log.i(">>> REMOVE NOTIF DATA", existNotifId);
+                                ref.child(existNotifId).removeValue();
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void addNotification(String postId, String publisherId) {
         HashMap<String, Object> map = new HashMap<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
 
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                notifId = (int) snapshot.getChildrenCount();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // code here
-            }
-        });
+        notifId = ref.push().getKey();
 
         map.put("notifid", notifId);
-        map.put("userid", firebaseUser.getUid());//
-        map.put("text", "liked your post.");//
-        map.put("postid", postId);//
+        map.put("userid", firebaseUser.getUid()); //to search if exist
+        map.put("text", "liked your post."); //to search if exist
+        map.put("postid", postId); //to search if exist
         map.put("datetime", currentDateTime);
         map.put("isPost", true);
 
+
         if (!firebaseUser.getUid().equals(publisherId)){
-            ref.child(String.valueOf(notifId)).setValue(map);
-            Log.i("INSERT DATA", String.valueOf(notifId));
+                Log.i("<<<INSERT DATA", notifId);
+                ref.child(notifId).setValue(map);
         }
     }
 

@@ -49,8 +49,8 @@ public class CommentActivity extends AppCompatActivity {
 
     private String postId;
     private String authorId;
-    int notifId = 0;
-    int id = 0;
+    String notifId;
+    String commentid;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -81,7 +81,7 @@ public class CommentActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(this, commentList, postId);
+        commentAdapter = new CommentAdapter(this, commentList, postId, authorId);
 
         recyclerView.setAdapter(commentAdapter);
 
@@ -149,25 +149,16 @@ public class CommentActivity extends AppCompatActivity {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
 
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                id = (int) snapshot.getChildrenCount();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // code here
-            }
-        });
+        commentid = ref.push().getKey();
 
-        map.put("id", id);
+        map.put("commentid", commentid);
         map.put("comment", addComment.getText().toString());
         map.put("publisher", fUser.getUid());
         map.put("datetime", currentDateTime);
 
         addComment.setText("");
 
-        ref.child(String.valueOf(id)).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        ref.child(commentid).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
@@ -178,7 +169,7 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
 
-        addNotification(ref.getKey(), fUser.getUid());
+        addNotification(ref.getKey(), fUser.getUid(), commentid);
 
     }
 
@@ -202,23 +193,12 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
-    private void addNotification(String postId, String publisherId) {
+    private void addNotification(String postId, String publisherId, String notifId) {
         HashMap<String, Object> map = new HashMap<>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId);
 
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                notifId = (int) snapshot.getChildrenCount();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // code here
-            }
-        });
-
-        map.put("notifid", notifId);
+        map.put("notifid", notifId); //to search for delete
         map.put("userid", publisherId);
         map.put("text", "comment on your post.");
         map.put("postid", postId);
@@ -227,7 +207,7 @@ public class CommentActivity extends AppCompatActivity {
 
         if(!publisherId.equals(authorId)){
             //FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).push().setValue(map);
-            ref.child(String.valueOf(notifId)).setValue(map);
+            ref.child(notifId).setValue(map);
         }
     }
 }

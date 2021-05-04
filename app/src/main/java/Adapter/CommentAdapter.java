@@ -1,8 +1,10 @@
 package Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -37,13 +38,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     private List<Comment> mComments;
 
     String postId;
+    String authorId;
 
     private FirebaseUser fUser;
 
-    public CommentAdapter(Context mContext, List<Comment> mComments , String postId) {
+    public CommentAdapter(Context mContext, List<Comment> mComments , String postId, String authorId) {
         this.mContext = mContext;
         this.mComments = mComments;
         this.postId = postId;
+        this.authorId = authorId;
     }
 
     @NonNull
@@ -103,18 +106,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (comment.getPublisher().endsWith(fUser.getUid())) {
+                if (comment.getPublisher().equals(fUser.getUid())) {
                     AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                     alertDialog.setTitle("Do you want to delete?");
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
                             FirebaseDatabase.getInstance().getReference().child("Comments")
-                                    .child(postId).child(String.valueOf(comment.getId())).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .child(postId).child(String.valueOf(comment.getCommentid())).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
+                                        FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).child(String.valueOf(comment.getCommentid())).removeValue();
                                         Toast.makeText(mContext, "Comment deleted successfully!", Toast.LENGTH_SHORT).show();
+                                        Log.i("DELETE COMMENT ID", String.valueOf(comment.getCommentid()));
+                                        Log.i("DELETE POST PUB", authorId);
                                         dialog.dismiss();
                                     }
                                 }

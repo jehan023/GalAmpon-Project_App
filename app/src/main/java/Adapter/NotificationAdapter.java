@@ -1,17 +1,23 @@
 package Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -83,7 +89,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             }
         });
 
-        /*holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
@@ -92,11 +98,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
                         FirebaseDatabase.getInstance().getReference().child("Notification")
-                                .child(firebaseUser.getUid()).child(notification.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                .child(firebaseUser.getUid()).child(notification.getNotifid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(mContext, "Comment deleted successfully!", Toast.LENGTH_SHORT).show();
+                                    FirebaseDatabase.getInstance().getReference().child("Notification")
+                                            .child(firebaseUser.getUid()).child(notification.getNotifid()).removeValue();
+                                    Toast.makeText(mContext, "Notification deleted successfully!", Toast.LENGTH_SHORT).show();
+                                    Log.i("DELETE NOTIFICATION", String.valueOf(notification.getNotifid()));
                                     dialog.dismiss();
                                 }
                             }
@@ -113,8 +122,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 alertDialog.show();
 
             return true;
-            };
-        });*/
+            }
+        });
 
     }
 

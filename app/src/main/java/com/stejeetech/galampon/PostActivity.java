@@ -1,8 +1,11 @@
 package com.stejeetech.galampon;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -74,7 +77,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         close = findViewById(R.id.close);
-        imageAdded = (ImageView) findViewById(R.id.image_added);
+        imageAdded = findViewById(R.id.image_added);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
         txtlocation = findViewById(R.id.location);
@@ -106,11 +109,15 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageUri != null) {
-                    upload();
-                } else{
-                    Toast.makeText(PostActivity.this, "Please select an image.", Toast.LENGTH_SHORT).show();
-                    selectImage();
+                if(!isConnected(PostActivity.this)){
+                    Toast.makeText(getApplicationContext(), "Unavailable, please connect on network.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (imageUri != null) {
+                        upload();
+                    } else {
+                        Toast.makeText(PostActivity.this, "Please select an image.", Toast.LENGTH_SHORT).show();
+                        selectImage();
+                    }
                 }
             }
         });
@@ -122,6 +129,18 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else
+            return false;
     }
 
     @Override

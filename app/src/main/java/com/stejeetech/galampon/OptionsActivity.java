@@ -2,6 +2,8 @@ package com.stejeetech.galampon;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,11 +44,15 @@ public class OptionsActivity extends AppCompatActivity {
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                finishAffinity();
-                Toast.makeText(OptionsActivity.this, "Signed out.", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(OptionsActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();
+                if (isConnected(OptionsActivity.this)){
+                    FirebaseAuth.getInstance().signOut();
+                    finishAffinity();
+                    Toast.makeText(OptionsActivity.this, "Logged out.", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(OptionsActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unavailable operation, please connect on network.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -62,5 +68,18 @@ public class OptionsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("OPTIONS Activity","onDestroy invoked");
+    }
+
+    public boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else
+            return false;
     }
 }

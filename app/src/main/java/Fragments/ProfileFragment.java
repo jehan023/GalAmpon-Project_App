@@ -2,6 +2,8 @@ package Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -104,10 +107,14 @@ public class ProfileFragment extends Fragment {
         postAdapterLiked = new PhotoAdapter(getContext(), myLikedPosts);
         recyclerViewLiked.setAdapter(postAdapterLiked);
 
-        userInfo();
-        getPostCount();
-        myPhotos();
-        getLikedPosts();
+        if(isConnected(getContext())){
+            userInfo();
+            getPostCount();
+            myPhotos();
+            getLikedPosts();
+        } else {
+            Toast.makeText(getContext(), "Unable to load.", Toast.LENGTH_SHORT).show();
+        }
 
         if (profileId.equals(fUser.getUid())) {
             editProfile.setVisibility(View.VISIBLE);
@@ -161,6 +168,18 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+    public boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else
+            return false;
     }
 
     private void getLikedPosts() {

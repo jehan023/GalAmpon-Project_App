@@ -2,7 +2,7 @@ package Model;
 
 public class Comment {
 
-    private int id;
+    private String commentid;
     private String comment;
     private String publisher;
     private String datetime;
@@ -10,21 +10,20 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(int id, String comment, String publisher, String datetime) {
-        this.id = id;
+    public Comment(String commentid, String comment, String publisher, String datetime) {
+        this.commentid = commentid;
         this.comment = comment;
         this.publisher = publisher;
         this.datetime = datetime;
     }
 
-    public int getId() {
-        return id;
+    public String getCommentid() {
+        return commentid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCommentid(String commentid) {
+        this.commentid = commentid;
     }
-
     public String getComment() {
         return comment;
     }
