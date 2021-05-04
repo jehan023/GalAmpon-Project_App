@@ -69,8 +69,8 @@ public class StartActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_nowifi);
         builder.setTitle("No Internet Connection");
 
-        builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        builder.setMessage("You need to have Mobile Data or WiFi to access this. Press");
+        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();

@@ -35,6 +35,7 @@
                 android:layout_height="50dp"
                 android:background="@drawable/button_background"
                 android:text="Log In"
+                android:textStyle="bold"
                 android:layout_gravity="center"
                 android:textAllCaps="true" />
 
@@ -50,6 +51,7 @@
                 android:layout_gravity="center"
                 android:background="@drawable/button_background"
                 android:text="Register"
+                android:textStyle="bold"
                 android:textAllCaps="true" />
         </LinearLayout>
 

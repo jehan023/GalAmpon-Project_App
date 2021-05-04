@@ -1,6 +1,8 @@
 package Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -113,7 +114,8 @@ public class ProfileFragment extends Fragment {
             myPhotos();
             getLikedPosts();
         } else {
-            Toast.makeText(getContext(), "Unable to load.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Unable to load. Please connect on network", Toast.LENGTH_SHORT).show();
+            buildDialog(getContext()).show();
         }
 
         if (profileId.equals(fUser.getUid())) {
@@ -180,6 +182,21 @@ public class ProfileFragment extends Fragment {
             else return false;
         } else
             return false;
+    }
+
+    public AlertDialog.Builder buildDialog(Context c) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setIcon(R.drawable.ic_nowifi);
+        builder.setTitle("No Internet Connection");
+
+        builder.setMessage("Unable to load, please connect on internet.");
+        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        return builder;
     }
 
     private void getLikedPosts() {

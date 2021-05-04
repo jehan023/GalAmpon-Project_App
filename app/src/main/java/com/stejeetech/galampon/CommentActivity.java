@@ -52,7 +52,7 @@ public class CommentActivity extends AppCompatActivity {
     String notifId;
     String commentid;
 
-    String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
+    String currentDateTime = new SimpleDateFormat("h:mmaa dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     FirebaseUser fUser;
 

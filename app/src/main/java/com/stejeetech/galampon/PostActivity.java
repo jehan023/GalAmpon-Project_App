@@ -1,7 +1,9 @@
 package com.stejeetech.galampon;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -93,8 +95,12 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Choose location of the post
-                Intent intent = new Intent(PostActivity.this, GoogleMapsActivity.class);
-                startActivityForResult(intent, PLACE_PICKER_REQUEST);
+                if(!isConnected(PostActivity.this)){
+                    buildDialog(PostActivity.this).show();
+                } else {
+                    Intent intent = new Intent(PostActivity.this, GoogleMapsActivity.class);
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+                }
             }
         });
 
@@ -141,6 +147,21 @@ public class PostActivity extends AppCompatActivity {
             else return false;
         } else
             return false;
+    }
+
+    public AlertDialog.Builder buildDialog(Context c) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setIcon(R.drawable.ic_nowifi);
+        builder.setTitle("No Connection!");
+
+        builder.setMessage("Unable to load map.");
+        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        return builder;
     }
 
     @Override

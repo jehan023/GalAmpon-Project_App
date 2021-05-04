@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.R;
@@ -77,13 +81,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.date.setText(post.getDate());
         holder.location.setText("- at " + post.getPostlocation());
 
-        FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
+        /*FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
         if (post.getPublisher().equals(firebaseUser.getUid())){
             holder.more.setVisibility(View.VISIBLE);
         }
         else {
             holder.more.setVisibility(View.INVISIBLE);
-        }
+        }*/
 
         FirebaseDatabase.getInstance().getReference().child("Users").child(post.getPublisher()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -125,6 +129,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
+                                        removeOnStorage(post.getImageurl());
                                         Toast.makeText(mContext, "Post deleted successfully!", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
@@ -139,6 +144,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         }
                     });
 
+                    alertDialog.show();
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setIcon(R.drawable.ic_report);
+                    alertDialog.setTitle("Report Post");
+                    alertDialog.setMessage("Do you want to report this post?");
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, int which) {
+                            FirebaseDatabase.getInstance().getReference().child("ReportPosts").child(post.getPostid())
+                                    .child(firebaseUser.getUid()).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(mContext, "Post reported successfully!", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
                     alertDialog.show();
                 }
             }
@@ -217,6 +249,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 intent.putExtra("postId", post.getPostid());
                 intent.putExtra("authorId", post.getPublisher());
                 mContext.startActivity(intent);
+            }
+        });
+    }
+
+    private void removeOnStorage(String imageUrl) {
+        final StorageReference filePath = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        filePath.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d("DELETE ON STORAGE", "onSuccess: deleted file");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d("DELETE ON STORAGE", "onFailure: did not delete file");
             }
         });
     }

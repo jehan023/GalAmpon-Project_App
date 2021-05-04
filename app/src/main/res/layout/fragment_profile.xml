@@ -18,7 +18,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -27,11 +27,12 @@
                     android:maxLines="1"
                     android:textStyle="bold"
                     android:id="@+id/username"
+                    android:layout_centerVertical="true"
                     android:textColor="@color/colorBlack"/>
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/options"
                     android:src="@drawable/ic_options"
                     android:layout_alignParentEnd="true"
@@ -116,7 +117,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:padding="2dp"
-                        android:text="EDIT PROFILE" />
+                        android:text="EDIT PROFILE"
+                        android:backgroundTint="@color/colorAccent"
+                        android:background="@drawable/button_background"/>
 
                 </LinearLayout>
 

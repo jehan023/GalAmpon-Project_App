@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -28,7 +29,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!isConnected(MainActivity.this)) {
-            //Toast.makeText(getApplicationContext(), "Please connect on Network.", Toast.LENGTH_SHORT).show();
             buildDialog(MainActivity.this).show();
         }
         setContentView(R.layout.activity_main);
@@ -81,18 +85,11 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_add:
-                        if(!isConnected(MainActivity.this)){
-                            Toast.makeText(getApplicationContext(), "Unavailable operation, Please connect on network.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            selectorFragment = null;
-                            startActivity(new Intent(MainActivity.this, PostActivity.class));
-                        }
+                        selectorFragment = null;
+                        startActivity(new Intent(MainActivity.this, PostActivity.class));
                         break;
 
                     case R.id.nav_profile:
-                        if(!isConnected(MainActivity.this)){
-                            Toast.makeText(getApplicationContext(), "Unavailable to load.", Toast.LENGTH_SHORT).show();
-                        }
                         selectorFragment = new ProfileFragment();
                         break;
                 }
@@ -115,6 +112,35 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
+    }
+    public void getNotificationChange(){
+        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     public String getCurrentLocationName() {
@@ -180,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_nowifi);
         builder.setTitle("No Internet Connection");
 
-        builder.setMessage("You need to have Mobile Data or wifi to access this.");
+        builder.setMessage("You need to have Mobile Data or WiFi to access this.");
         builder.setPositiveButton("Connect", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

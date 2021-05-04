@@ -92,6 +92,7 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
 
         return view;
     }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 
@@ -137,8 +138,13 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     if(!post.getPublisher().equals(firebaseUser.getUid())){
-                        if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= (double) range){
-                            nearbyList.add(post);
+                        if(locationName != null && userLatitude != null && userLongitude != null){
+                            if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= range){
+                                nearbyList.add(post);
+                            }
+                        } else {
+                            getFragmentManager().beginTransaction().detach(NearbyFragment.this).commitNowAllowingStateLoss();
+                            getFragmentManager().beginTransaction().attach(new NearbyFragment()).commitAllowingStateLoss();
                         }
                     }
                 }
