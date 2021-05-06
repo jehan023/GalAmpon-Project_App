@@ -88,9 +88,9 @@
                 android:layout_height="wrap_content"
                 android:text="Range:"
                 android:layout_marginRight="15dp"
-                android:layout_gravity="center"
+                android:layout_gravity="center_vertical"
                 android:textColor="@color/colorBlack"
-                android:textSize="15sp"/>
+                android:textSize="18sp"/>
 
             <Spinner
                 android:id="@+id/spinner"

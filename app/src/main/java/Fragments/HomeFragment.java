@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+    @SuppressLint("LongLogTag")
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
@@ -76,15 +78,16 @@ public class HomeFragment extends Fragment {
         {
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
             recyclerViewPosts.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-            Log.i(">>> onViewStateRestored", "VIEW STATE RESTORED");
+            Log.i(">>> HomeFragment onViewStateRestored", "VIEW STATE RESTORED");
         }
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, recyclerViewPosts.getLayoutManager().onSaveInstanceState());
-        Log.i(">>> onSaveInstanceState", "SAVE INSTANCE STATE");
+        Log.i(">>> HomeFragment onSaveInstanceState", "SAVE INSTANCE STATE");
     }
 
     @Override

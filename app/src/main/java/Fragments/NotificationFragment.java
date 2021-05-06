@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,11 +50,12 @@ public class NotificationFragment extends Fragment {
         readNotifications();
 
         close.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("LongLogTag")
             @Override
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate();
                 onDestroy();
-                Log.i("Post detail fragment", "DESTROYED");
+                Log.i(">>> NotificationFragment", "Closed");
             }
         });
 
@@ -82,15 +84,17 @@ public class NotificationFragment extends Fragment {
         });
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("Notification Fragment","On Stop");
+        Log.i(">>> NotificationFragment","On Stop");
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i("Notification Fragment", "On Destroy View");
+        Log.i(">>> NotificationFragment", "On Destroy View");
     }
 }

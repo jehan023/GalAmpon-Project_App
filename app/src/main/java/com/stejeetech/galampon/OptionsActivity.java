@@ -60,14 +60,14 @@ public class OptionsActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("OPTIONS Activity","onStop invoked");
+        Log.d(">>> OptionsActivity","onStop invoked");
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("OPTIONS Activity","onDestroy invoked");
+        Log.d(">>> OptionsActivity","onDestroy invoked");
     }
 
     public boolean isConnected(Context context) {

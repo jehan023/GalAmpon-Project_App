@@ -70,7 +70,7 @@ public class PostDetailFragment extends Fragment {
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate();
                 onDestroy();
-                Log.i("Post detail fragment", "DESTROYED");
+                Log.i(">>> PostDetailFragment", "Closed");
             }
         });
 
@@ -80,12 +80,12 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("PostDetailFragment","ON STOP");
+        Log.i(">>> PostDetailFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i("PostDetailFragment", "ON DESTROY VIEW");
+        Log.i(">>> PostDetailFragment", "ON DESTROY VIEW");
     }
 }

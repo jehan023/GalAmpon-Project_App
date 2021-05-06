@@ -179,12 +179,12 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("NEARBY Fragment","On Stop");
+        Log.i(">>> NearbyFragment","On Stop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i("NEARBY Fragment", "On Destroy View");
+        Log.i(">>> NearbyFragment", "On Destroy View");
     }
 }

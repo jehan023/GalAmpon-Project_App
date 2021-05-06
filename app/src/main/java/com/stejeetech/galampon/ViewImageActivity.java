@@ -57,7 +57,8 @@ public class ViewImageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("ViewImageActivity", "FINISH");
+                Log.i(">>> ViewImageActivity", "FINISH");
+                getFragmentManager().popBackStackImmediate();
                 finish();
             }
         });
@@ -117,7 +118,8 @@ public class ViewImageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.i("ViewImageActivity", "FINISH");
+        getFragmentManager().popBackStackImmediate();
+        Log.i(">>> ViewImageActivity", "FINISH");
         finish();
     }
 
@@ -243,7 +245,7 @@ public class ViewImageActivity extends AppCompatActivity {
 
 
         if (!firebaseUser.getUid().equals(publisherId)){
-            Log.i("<<<INSERT DATA", notifId);
+            Log.i("<<<ADD NOTIF DATA", notifId);
             ref.child(notifId).setValue(map);
         }
     }

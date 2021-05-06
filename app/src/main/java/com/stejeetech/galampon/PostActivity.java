@@ -108,6 +108,7 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(PostActivity.this , MainActivity.class));
+                Log.i(">>> PostActivity","FINISH");
                 finish();
             }
         });
@@ -167,7 +168,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.i("PostActivity", "FINISH");
+        Log.i(">>> PostActivity", "FINISH");
         finish();
     }
 
@@ -317,5 +318,6 @@ public class PostActivity extends AppCompatActivity {
         });
 
         description.setHashtagAdapter(hashtagAdapter);
+        Log.i(">>> PostActivity","onStart");
     }
 }

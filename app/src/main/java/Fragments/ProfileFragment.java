@@ -316,14 +316,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        final String TAG = "ProfileFragment";
-        Log.i(TAG,"ON STOP");
+        Log.i(">>> ProfileFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        final String TAG = "ProfileFragment";
-        Log.i(TAG, "ON DESTROY VIEW");
+        Log.i(">>> ProfileFragment", "ON DESTROY VIEW");
     }
 }

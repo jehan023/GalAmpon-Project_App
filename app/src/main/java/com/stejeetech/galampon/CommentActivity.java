@@ -69,6 +69,7 @@ public class CommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                Log.d(">>> CommentActivity","Finish()");
             }
         });
 
@@ -110,14 +111,14 @@ public class CommentActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("Comment Activity","onStop invoked");
+        Log.d(">>> CommentActivity","onStop invoked");
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("Comment Activity","onDestroy invoked");
+        Log.d(">>> CommentActivity","onDestroy invoked");
     }
 
     private void getComment() {

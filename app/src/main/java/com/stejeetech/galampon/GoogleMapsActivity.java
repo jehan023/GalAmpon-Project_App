@@ -109,6 +109,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 @Override
                 public void onClick(View view) {
                     onBackPressed();
+                    Log.i(">>> GoogleMapsActivity","FINISH");
                     finish();
                 }
             });
@@ -310,6 +311,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Log.i(">>> GoogleMapsActivity","FINISH");
         finish();
     }
     @Override

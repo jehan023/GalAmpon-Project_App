@@ -119,17 +119,17 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.i("onChildAdded", "NEW NOTIF DATA ADDED");
+                Log.i("onChildAdded", snapshot.getValue().toString());
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.i("onChildChanged", "NOTIF DATA CHANGED");
+                Log.i("onChildChanged", snapshot.getValue().toString());
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Log.i("onChildRemoved", "NOTIF DATA REMOVED");
+                Log.i("onChildRemoved", snapshot.getValue().toString());
             }
 
             @Override
@@ -228,7 +228,12 @@ public class MainActivity extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         finish();
+        Log.i(">>> MainActivity","onRestart");
         startActivity(getIntent());
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 }

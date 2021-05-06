@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostActivity"
-    android:background="@color/colorBlack">
+    android:background="@color/colorWhite">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -16,30 +16,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="@color/colorBlack"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:background="@color/colorWhite"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:layout_centerVertical="true"
                     android:text="Post Detail"
-                    android:textColor="@color/colorWhite"/>
+                    android:textColor="@color/colorPrimaryDark"/>
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:id="@+id/close"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:src="@drawable/ic_close"
                     android:layout_marginRight="15dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    app:tint="@color/colorWhite" />
+                    app:tint="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -51,6 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/bar"
+        android:background="@drawable/image_border"
         android:id="@+id/recycler_view"/>
 
 </RelativeLayout>
