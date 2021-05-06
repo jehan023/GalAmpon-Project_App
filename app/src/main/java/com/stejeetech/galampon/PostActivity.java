@@ -234,6 +234,7 @@ public class PostActivity extends AppCompatActivity {
 
                         pd.dismiss();
                         startActivity(new Intent(PostActivity.this , MainActivity.class));
+                        Toast.makeText(PostActivity.this, "Post Successful.", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {

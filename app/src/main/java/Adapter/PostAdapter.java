@@ -1,5 +1,6 @@
 package Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -53,8 +54,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
     String notifId;
-    boolean exist = false;
     String existNotifId;
+    String removePostId;
+    String likedUserId;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -80,14 +82,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.description.setText(post.getDescription());
         holder.date.setText(post.getDate());
         holder.location.setText("- at " + post.getPostlocation());
-
-        /*FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
-        if (post.getPublisher().equals(firebaseUser.getUid())){
-            holder.more.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.more.setVisibility(View.INVISIBLE);
-        }*/
 
         FirebaseDatabase.getInstance().getReference().child("Users").child(post.getPublisher()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,6 +111,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onClick(View v) {
                 FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPublisher());
                 if (post.getPublisher().equals(firebaseUser.getUid())) {
+                    removePostId = post.getPostid().toString();
                     AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                     alertDialog.setIcon(R.drawable.ic_delete);
                     alertDialog.setTitle("Delete Post");
@@ -124,12 +119,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
+
+                            removeOnStorage(post.getImageurl());
+                            removeOnReport(removePostId);
+                            removeComment(removePostId);
+                            removePostLikes(removePostId);
+                            removePostLikedByUser(removePostId);
+                            removeAllPostNotification(removePostId, post.getPublisher());
+
                             FirebaseDatabase.getInstance().getReference().child("Posts")
                                     .child(post.getPostid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        removeOnStorage(post.getImageurl());
                                         Toast.makeText(mContext, "Post deleted successfully!", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
@@ -248,7 +250,139 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent intent = new Intent(mContext, ViewImageActivity.class);
                 intent.putExtra("postId", post.getPostid());
                 intent.putExtra("authorId", post.getPublisher());
+                intent.putExtra("imageUrl", post.getImageurl());
                 mContext.startActivity(intent);
+            }
+        });
+    }
+
+    private void removePostLikedByUser(String postId) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("LikedByUser");
+        Query query = ref.orderByChild(postId).equalTo(true);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        if(data.child(postId).exists()) {
+                            if(data.child(postId).getValue().equals(true)) {
+                                likedUserId = data.getRef().getKey().toString();
+                                Log.i("REMOVE LIKED DATA", likedUserId);
+                                ref.child(likedUserId).child(postId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @SuppressLint("LongLogTag")
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // File deleted successfully
+                                        Log.d("DELETE LIKED POST ID", postId);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @SuppressLint("LongLogTag")
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Uh-oh, an error occurred!
+                                        Log.d("DELETE LIKED POST ID", "onFailure: did not delete file");
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void removePostLikes(String postId) {
+        FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d("DELETE POST LIKES", postId);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d("DELETE POST LIKES", "onFailure: did not delete file");
+            }
+        });
+    }
+
+    private void removeComment(String postId) {
+        FirebaseDatabase.getInstance().getReference().child("Comments").child(postId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d("DELETE POST COMMENTS", postId);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d("DELETE POST COMMENTS", "onFailure: did not delete file");
+            }
+        });
+    }
+
+    private void removeAllPostNotification(String postId, String publisherId) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
+
+        Query query = ref.orderByChild("postid").equalTo(postId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        if(data.child("postid").exists()) {
+                            if(data.child("postid").getValue().toString().equals(postId)) {
+                                existNotifId = data.getRef().getKey().toString();
+                                Log.i("REMOVE NOTIF DATA", existNotifId);
+                                ref.child(existNotifId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @SuppressLint("LongLogTag")
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // File deleted successfully
+                                        Log.d("DELETE POST NOTIFICATIONS", existNotifId);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @SuppressLint("LongLogTag")
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Uh-oh, an error occurred!
+                                        Log.d("DELETE POST NOTIFICATIONS", "onFailure: did not delete file");
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void removeOnReport(String postId) {
+        FirebaseDatabase.getInstance().getReference().child("ReportPosts").child(postId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d("DELETE POST REPORTS", postId);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d("DELETE POST REPORTS", "onFailure: did not delete file");
             }
         });
     }
@@ -259,7 +393,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onSuccess(Void aVoid) {
                 // File deleted successfully
-                Log.d("DELETE ON STORAGE", "onSuccess: deleted file");
+                Log.d("DELETE ON STORAGE", imageUrl);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

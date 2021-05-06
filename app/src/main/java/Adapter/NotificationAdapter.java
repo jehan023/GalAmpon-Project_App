@@ -155,13 +155,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
-                Glide.with(mContext).load(post.getImageurl()).placeholder(R.mipmap.ic_launcher).into(imageView);
+                if(dataSnapshot.exists()){
+                    Log.i("DATASNAPSHOT", dataSnapshot.getValue().toString());
+
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post == null) throw new AssertionError();
+                    if(post.getImageurl() != null){
+                        Glide.with(mContext).load(post.getImageurl()).placeholder(R.mipmap.ic_launcher).into(imageView);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -171,12 +177,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if (user.getImageurl().equals("default")) {
-                    imageView.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    Glide.with(mContext).load(user.getImageurl()).into(imageView);
+                if (user.getImageurl() != null){
+                    if (user.getImageurl().equals("default")) {
+                        imageView.setImageResource(R.mipmap.ic_launcher);
+                    } else {
+                        Glide.with(mContext).load(user.getImageurl()).into(imageView);
+                    }
+                    textView.setText(user.getUsername());
                 }
-                textView.setText(user.getUsername());
             }
 
             @Override

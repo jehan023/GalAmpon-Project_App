@@ -17,15 +17,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-
-import Model.Post;
 
 public class ViewImageActivity extends AppCompatActivity {
     private Context context;
@@ -36,13 +36,14 @@ public class ViewImageActivity extends AppCompatActivity {
     private TextView noOfLikes;
     private TextView noOfComments;
 
-    private String postId, authorId, publisherId;
+    private String postId, authorId, imageUrl;
 
     private FirebaseUser firebaseUser;
 
+    String notifId;
+    String existNotifId;
+
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class ViewImageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
         authorId = intent.getStringExtra("authorId");
+        imageUrl = intent.getStringExtra("imageUrl");
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -88,13 +90,14 @@ public class ViewImageActivity extends AppCompatActivity {
                     FirebaseDatabase.getInstance().getReference().child("LikedByUser")
                             .child(firebaseUser.getUid()).child(postId).setValue(true);
 
-                    addNotification(postId, publisherId);
+                    addNotification(postId, authorId);
 
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Likes")
                             .child(postId).child(firebaseUser.getUid()).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("LikedByUser")
                             .child(firebaseUser.getUid()).child(postId).removeValue();
+                    removeNotification(postId, authorId, firebaseUser.getUid(), "liked your post.");
                 }
             }
         });
@@ -119,9 +122,10 @@ public class ViewImageActivity extends AppCompatActivity {
     }
 
     private void getPostImage() {
-        FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
+        /*FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 Post post = snapshot.getValue(Post.class);
                 publisherId = post.getPublisher();
                 if (post.getImageurl().equals("default")){
@@ -135,7 +139,13 @@ public class ViewImageActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
+        if (imageUrl.equals("default")){
+            postImage.setImageResource(R.mipmap.ic_launcher_round);
+        } else{
+            Glide.with(getApplicationContext()).load(imageUrl).into(postImage);
+        }
+
 
     }
 
@@ -187,17 +197,54 @@ public class ViewImageActivity extends AppCompatActivity {
         });
     }
 
+    private void removeNotification (String postId, String publisherId, String userId, String content){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
+
+        Query query = ref.orderByChild("postid").equalTo(postId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        if(data.child("postid").exists() && data.child("userid").exists() && data.child("text").exists()) {
+                            if(data.child("postid").getValue().toString().equals(postId)
+                                    && data.child("userid").getValue().toString().equals(firebaseUser.getUid())
+                                    && data.child("text").getValue().toString().equals("liked your post.")) {
+                                existNotifId = data.getRef().getKey().toString();
+                                Log.i(">>> REMOVE NOTIF DATA", existNotifId);
+                                ref.child(existNotifId).removeValue();
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void addNotification(String postId, String publisherId) {
         HashMap<String, Object> map = new HashMap<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
 
-        map.put("userid", firebaseUser.getUid());
-        map.put("text", "liked your post.");
-        map.put("postid", postId);
+        notifId = ref.push().getKey();
+
+        map.put("notifid", notifId);
+        map.put("userid", firebaseUser.getUid()); //to search if exist
+        map.put("text", "liked your post."); //to search if exist
+        map.put("postid", postId); //to search if exist
         map.put("datetime", currentDateTime);
         map.put("isPost", true);
 
+
         if (!firebaseUser.getUid().equals(publisherId)){
-            FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId).push().setValue(map);
+            Log.i("<<<INSERT DATA", notifId);
+            ref.child(notifId).setValue(map);
         }
     }
 }

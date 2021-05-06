@@ -143,8 +143,8 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
                                 nearbyList.add(post);
                             }
                         } else {
-                            getFragmentManager().beginTransaction().detach(NearbyFragment.this).commitNowAllowingStateLoss();
-                            getFragmentManager().beginTransaction().attach(new NearbyFragment()).commitAllowingStateLoss();
+                            getFragmentManager().beginTransaction().detach(NearbyFragment.this).commit();
+                            getFragmentManager().beginTransaction().attach(new NearbyFragment()).commit();
                         }
                     }
                 }

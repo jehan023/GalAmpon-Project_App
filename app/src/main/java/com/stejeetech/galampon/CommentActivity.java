@@ -206,7 +206,6 @@ public class CommentActivity extends AppCompatActivity {
         map.put("isPost", true);
 
         if(!publisherId.equals(authorId)){
-            //FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).push().setValue(map);
             ref.child(notifId).setValue(map);
         }
     }

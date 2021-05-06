@@ -60,12 +60,13 @@ public class NotificationFragment extends Fragment {
         return view;
     }
 
-    private void readNotifications() {
+    public void readNotifications() {
 
         FirebaseDatabase.getInstance().getReference().child("Notifications").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notificationList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     notificationList.add(snapshot.getValue(Notification.class));
                 }

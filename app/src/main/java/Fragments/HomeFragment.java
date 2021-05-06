@@ -1,6 +1,7 @@
 package Fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -30,10 +32,11 @@ public class HomeFragment extends Fragment {
 
     private ImageView notificationBell;
 
-    private RecyclerView recyclerViewPosts;
+    public RecyclerView recyclerViewPosts;
     private PostAdapter postAdapter;
     private List<Post> postList;
-
+    private static final String BUNDLE_RECYCLER_LAYOUT = "HomeFragment.recycler.layout";
+    int lastFirstVisiblePosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,17 +69,34 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-
     @Override
-    public void onStop() {
-        super.onStop();
-        Log.i("Home Fragment","On Stop");
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null)
+        {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            recyclerViewPosts.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+            Log.i(">>> onViewStateRestored", "VIEW STATE RESTORED");
+        }
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.i("Home Fragment", "On Destroy View");
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, recyclerViewPosts.getLayoutManager().onSaveInstanceState());
+        Log.i(">>> onSaveInstanceState", "SAVE INSTANCE STATE");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        lastFirstVisiblePosition = ((LinearLayoutManager) recyclerViewPosts.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((LinearLayoutManager) recyclerViewPosts.getLayoutManager()).scrollToPositionWithOffset(lastFirstVisiblePosition,0);
     }
 
     private void readPost() {
