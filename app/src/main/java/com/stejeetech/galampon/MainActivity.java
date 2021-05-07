@@ -34,6 +34,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.onesignal.OneSignal;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,19 +45,32 @@ import Fragments.NearbyFragment;
 import Fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String ONESIGNAL_APP_ID = "e9766fbd-cdb8-4f98-8015-80ca9add301d";
 
     private BottomNavigationView bottomNavigationView;
     private Fragment selectorFragment;
 
     public String currentLocationName;
     public Double currentLatitude, currentLongitude;
-    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    public String LoggedIn_user_Email;
+    public String send_email;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Enable verbose OneSignal logging to debug issues if needed.
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+
+        // OneSignal Initialization
+        OneSignal.initWithContext(this);
+        OneSignal.setAppId(ONESIGNAL_APP_ID);
+
+        LoggedIn_user_Email = firebaseUser.getEmail();
+        OneSignal.sendTag("User_ID", LoggedIn_user_Email);
+
         if(!isConnected(MainActivity.this)) {
             buildDialog(MainActivity.this).show();
         }
@@ -144,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     public String getCurrentLocationName() {
         return currentLocationName;

@@ -1,16 +1,12 @@
 package Fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,7 +20,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.stejeetech.galampon.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import Adapter.PostAdapter;
 import Model.Post;
@@ -35,8 +30,7 @@ public class HomeFragment extends Fragment {
 
     public RecyclerView recyclerViewPosts;
     private PostAdapter postAdapter;
-    private List<Post> postList;
-    private static final String BUNDLE_RECYCLER_LAYOUT = "HomeFragment.recycler.layout";
+    private ArrayList<Post> postList;
     int lastFirstVisiblePosition;
 
     @Override
@@ -69,25 +63,6 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
-    }
-    @SuppressLint("LongLogTag")
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null)
-        {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            recyclerViewPosts.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-            Log.i(">>> HomeFragment onViewStateRestored", "VIEW STATE RESTORED");
-        }
-    }
-
-    @SuppressLint("LongLogTag")
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, recyclerViewPosts.getLayoutManager().onSaveInstanceState());
-        Log.i(">>> HomeFragment onSaveInstanceState", "SAVE INSTANCE STATE");
     }
 
     @Override
