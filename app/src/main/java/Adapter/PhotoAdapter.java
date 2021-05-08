@@ -42,14 +42,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         holder.postImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
                 int fragCount = ((FragmentActivity)mContext).getSupportFragmentManager().getBackStackEntryCount();
 
                 if (fragCount < 8){
                     mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
+                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("profileID", post.getPublisher()).apply();
 
                     ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(new PostDetailFragment())).commit();
+                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack("ProfileFrag").commit();
                 }
             }
         });

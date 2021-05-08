@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public Double currentLatitude, currentLongitude;
     private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     public String LoggedIn_user_Email;
-    public String send_email;
+    public String profileId;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle intent = getIntent().getExtras();
         if (intent != null) {
-            String profileId = intent.getString("publisherId");
+            profileId = intent.getString("publisherId");
 
             getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", profileId).apply();
 
@@ -127,6 +127,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("publisherId",profileId);
+        getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", profileId).apply();
+        super.onSaveInstanceState(outState);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        profileId = savedInstanceState.getString("publisherId");
+        getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
     }
 
     protected void getNotificationChange(){
@@ -156,10 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
-
-
 
     public String getCurrentLocationName() {
         return currentLocationName;
@@ -201,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    getLocation();
                 }
             }
         });
@@ -240,13 +252,13 @@ public class MainActivity extends AppCompatActivity {
         return builder;
     }
 
-    @Override
+    /*@Override
     public void onRestart() {
         super.onRestart();
         finish();
         Log.i(">>> MainActivity","onRestart");
         startActivity(getIntent());
-    }
+    }*/
 
     @Override
     protected void onPause() {

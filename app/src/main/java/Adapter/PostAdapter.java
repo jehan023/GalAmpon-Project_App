@@ -64,6 +64,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     String existNotifId;
     String removePostId;
     String likedUserId;
+    String liker;
 
     String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -556,9 +557,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
 
         if (!firebaseUser.getUid().equals(publisherId)){
-            String email = null;
             Log.i("<<<INSERT DATA", notifId);
             ref.child(notifId).setValue(map);
+
+            // GET THE CURRENT USER'S USERNAME
+            DatabaseReference sender = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
+            Query queryUSER = sender.orderByChild("username");
+            queryUSER.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    liker = snapshot.child("username").getValue().toString();
+                    Log.i("LIKER USERNAME", liker);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            // GET THE PUBLISHER'S EMAIL
+
             DatabaseReference receiver = FirebaseDatabase.getInstance().getReference().child("Users").child(publisherId);
             Query query = receiver.orderByChild("email");
             query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -568,7 +586,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         if (dataSnapshot.child("email").exists()) {
                             MainActivity main = new MainActivity();
                             String email = dataSnapshot.child("email").getValue().toString();
-                            String liker = dataSnapshot.child("username").getValue().toString();
                             Log.i("RECEIVER EMAIL", email);
                             sendNotification(email,liker + " liked your post.");
                         }
@@ -580,6 +597,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                 }
             });
+
+
         }
     }
     private void sendNotification(String receiver, String Message) {
@@ -607,6 +626,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         String strJsonBody = "{"
                                 + "\"app_id\": \"e9766fbd-cdb8-4f98-8015-80ca9add301d\","
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \""+ receiver + "\"}],"
+                                + "\"category\": \"Notification\","
                                 + "\"data\": {\"foo\": \"bar\"},"
                                 + "\"contents\": {\"en\": \"" + Message +"\"}"
                                 + "}";

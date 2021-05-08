@@ -57,8 +57,8 @@ public class CommentActivity extends AppCompatActivity {
 
     private String postId;
     private String authorId;
-    String notifId;
     String commentid;
+    String commentor;
 
     String currentDateTime = new SimpleDateFormat("h:mmaa dd MMM yyyy", Locale.getDefault()).format(new Date());
 
@@ -193,6 +193,7 @@ public class CommentActivity extends AppCompatActivity {
                 } else {
                     Glide.with(getApplicationContext()).load(user.getImageurl()).into(imageProfile);
                 }
+                commentor = user.getUsername().toString();
             }
 
             @Override
@@ -225,9 +226,9 @@ public class CommentActivity extends AppCompatActivity {
                         if (dataSnapshot.child("email").exists()) {
                             MainActivity main = new MainActivity();
                             String email = dataSnapshot.child("email").getValue().toString();
-                            String liker = dataSnapshot.child("username").getValue().toString();
                             Log.i("RECEIVER EMAIL", email);
-                            sendNotification(email,liker + " comment on your post.");
+                            Log.i("COMMENTOR USERNAME", commentor);
+                            sendNotification(email,commentor + " comment on your post.");
                         }
                     }
                 }

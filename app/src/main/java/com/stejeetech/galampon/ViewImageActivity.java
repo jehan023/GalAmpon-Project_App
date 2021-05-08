@@ -58,7 +58,6 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i(">>> ViewImageActivity", "FINISH");
-                getFragmentManager().popBackStackImmediate();
                 finish();
             }
         });
@@ -106,10 +105,10 @@ public class ViewImageActivity extends AppCompatActivity {
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CommentActivity.class);
+                Intent intent = new Intent(ViewImageActivity.this, CommentActivity.class);
                 intent.putExtra("postId", postId);
                 intent.putExtra("authorId", authorId);
-                getApplicationContext().startActivity(intent);
+                ViewImageActivity.this.startActivity(intent);
             }
         });
 
@@ -118,7 +117,6 @@ public class ViewImageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        getFragmentManager().popBackStackImmediate();
         Log.i(">>> ViewImageActivity", "FINISH");
         finish();
     }

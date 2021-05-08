@@ -58,6 +58,9 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
         locationName = view.findViewById(R.id.locationInfo);
         MainActivity main = (MainActivity) getActivity();
         locationName.setText(main.getCurrentLocationName());
+        if (locationName == null){
+            main.checkPermission();
+        }
         userLatitude = main.getCurrentLatitude();
         userLongitude = main.getCurrentLongitude();
 
@@ -142,9 +145,6 @@ public class NearbyFragment extends Fragment implements AdapterView.OnItemSelect
                             if(CalculationByDistance(userLatitude,userLongitude,post.getPostlatitude(),post.getPostlongitude()) <= range){
                                 nearbyList.add(post);
                             }
-                        } else {
-                            getFragmentManager().beginTransaction().detach(NearbyFragment.this).commit();
-                            getFragmentManager().beginTransaction().attach(new NearbyFragment()).commit();
                         }
                     }
                 }

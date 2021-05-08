@@ -28,6 +28,7 @@ import Model.Post;
 public class PostDetailFragment extends Fragment {
 
     private String postId;
+    private String profileID;
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
@@ -40,6 +41,7 @@ public class PostDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
 
         postId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("postid", "none");
+        profileID = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("profileID", "none");
 
         recyclerView = view.findViewById(R.id.recycler_view);
         close = view.findViewById(R.id.close);
@@ -68,6 +70,7 @@ public class PostDetailFragment extends Fragment {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
                 getFragmentManager().popBackStackImmediate();
                 onDestroy();
                 Log.i(">>> PostDetailFragment", "Closed");
@@ -80,12 +83,14 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
         Log.i(">>> PostDetailFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
         Log.i(">>> PostDetailFragment", "ON DESTROY VIEW");
     }
 }
