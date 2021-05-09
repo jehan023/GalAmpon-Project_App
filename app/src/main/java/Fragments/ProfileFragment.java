@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -82,6 +83,7 @@ public class ProfileFragment extends Fragment {
             profileId = data;
             getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().clear().apply();
         }
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
 
         imageProfile = view.findViewById(R.id.image_profile);
         options = view.findViewById(R.id.options);
@@ -114,7 +116,6 @@ public class ProfileFragment extends Fragment {
             myPhotos();
             getLikedPosts();
         } else {
-            //Toast.makeText(getContext(), "Unable to load. Please connect on network", Toast.LENGTH_SHORT).show();
             buildDialog(getContext()).show();
         }
 
@@ -122,6 +123,8 @@ public class ProfileFragment extends Fragment {
             editProfile.setVisibility(View.VISIBLE);
         } else {
             editProfile.setVisibility(View.INVISIBLE);
+            likedPictures.setVisibility(View.INVISIBLE);
+            myPictures.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             postCount.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         }
 
@@ -136,11 +139,34 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+
         myPictures.setBackgroundColor(getResources().getColor(R.color.colorGrey));
         likedPictures.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
         recyclerView.setVisibility(View.VISIBLE);
         recyclerViewLiked.setVisibility(View.GONE);
+
+        if (profileId.equals(fUser.getUid())) {
+            options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), OptionsActivity.class));
+                }
+            });
+        } else {
+            options.setImageResource(R.drawable.ic_close);
+            options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", fUser.getUid()).apply();
+                    ((FragmentActivity)getContext()).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new HomeFragment()).commit();
+                    Log.i(">>> ProfileFragment", "Closed");
+                }
+            });
+        }
+
 
         myPictures.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +175,7 @@ public class ProfileFragment extends Fragment {
                 likedPictures.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerViewLiked.setVisibility(View.GONE);
+                getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
             }
         });
 
@@ -159,18 +186,13 @@ public class ProfileFragment extends Fragment {
                 likedPictures.setBackgroundColor(getResources().getColor(R.color.colorGrey));
                 recyclerView.setVisibility(View.GONE);
                 recyclerViewLiked.setVisibility(View.VISIBLE);
-            }
-        });
-
-        options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), OptionsActivity.class));
+                getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
             }
         });
 
         return view;
     }
+
     public boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -225,7 +247,6 @@ public class ProfileFragment extends Fragment {
                                 }
                             }
                         }
-
                         postAdapterLiked.notifyDataSetChanged();
                     }
 
@@ -241,7 +262,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
     }
 
     private void myPhotos() {
@@ -257,14 +277,12 @@ public class ProfileFragment extends Fragment {
                         myPhotoList.add(post);
                     }
                 }
-
                 Collections.reverse(myPhotoList);
                 photoAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -312,7 +330,6 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-
     @Override
     public void onStop() {
         super.onStop();

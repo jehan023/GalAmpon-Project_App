@@ -46,10 +46,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
                 if (fragCount < 8){
                     mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("postid", post.getPostid()).apply();
-                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("profileID", post.getPublisher()).apply();
+                    mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("profileId", post.getPublisher()).apply();
 
                     ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack("ProfileFrag").commit();
+                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(null).commit();
                 }
             }
         });

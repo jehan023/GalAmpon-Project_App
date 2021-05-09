@@ -41,7 +41,7 @@ public class PostDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
 
         postId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("postid", "none");
-        profileID = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("profileID", "none");
+        profileID = getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
 
         recyclerView = view.findViewById(R.id.recycler_view);
         close = view.findViewById(R.id.close);
@@ -70,9 +70,8 @@ public class PostDetailFragment extends Fragment {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
+                //getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
                 getFragmentManager().popBackStackImmediate();
-                onDestroy();
                 Log.i(">>> PostDetailFragment", "Closed");
             }
         });

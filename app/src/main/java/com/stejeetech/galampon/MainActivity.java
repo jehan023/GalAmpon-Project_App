@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_profile:
+                        getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", profileId).apply();
                         selectorFragment = new ProfileFragment();
                         break;
                 }
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             profileId = intent.getString("publisherId");
 
             getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", profileId).apply();
+            getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", firebaseUser.getUid()).apply();
 
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
             bottomNavigationView.setSelectedItemId(R.id.nav_profile);
