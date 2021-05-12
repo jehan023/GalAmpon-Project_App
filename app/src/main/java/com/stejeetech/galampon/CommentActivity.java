@@ -58,9 +58,10 @@ public class CommentActivity extends AppCompatActivity {
     private String postId;
     private String authorId;
     String commentid;
-    String commentor;
+    String commentorUsername;
+    String commentorID;
 
-    String currentDateTime = new SimpleDateFormat("h:mmaa dd MMM yyyy", Locale.getDefault()).format(new Date());
+    //String currentDateTime = new SimpleDateFormat("h:mmaa dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     FirebaseUser fUser;
 
@@ -135,7 +136,6 @@ public class CommentActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 commentList.clear();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Comment comment = snapshot.getValue(Comment.class);
                     commentList.add(comment);
@@ -149,7 +149,6 @@ public class CommentActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void putComment() {
@@ -163,7 +162,7 @@ public class CommentActivity extends AppCompatActivity {
         map.put("commentid", commentid);
         map.put("comment", addComment.getText().toString());
         map.put("publisher", fUser.getUid());
-        map.put("datetime", currentDateTime);
+        map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
 
         addComment.setText("");
 
@@ -179,7 +178,6 @@ public class CommentActivity extends AppCompatActivity {
         });
 
         addNotification(ref.getKey(), fUser.getUid(), commentid);
-
     }
 
     private void getUserImage() {
@@ -193,7 +191,7 @@ public class CommentActivity extends AppCompatActivity {
                 } else {
                     Glide.with(getApplicationContext()).load(user.getImageurl()).into(imageProfile);
                 }
-                commentor = user.getUsername().toString();
+                commentorUsername = user.getUsername().toString();
             }
 
             @Override
@@ -202,6 +200,7 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void addNotification(String postId, String publisherId, String notifId) {
         HashMap<String, Object> map = new HashMap<>();
@@ -212,7 +211,7 @@ public class CommentActivity extends AppCompatActivity {
         map.put("userid", publisherId);
         map.put("text", "comment on your post.");
         map.put("postid", postId);
-        map.put("datetime", currentDateTime);
+        map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
         map.put("isPost", true);
 
         if(!publisherId.equals(authorId)){
@@ -227,8 +226,8 @@ public class CommentActivity extends AppCompatActivity {
                             MainActivity main = new MainActivity();
                             String email = dataSnapshot.child("email").getValue().toString();
                             Log.i("RECEIVER EMAIL", email);
-                            Log.i("COMMENTOR USERNAME", commentor);
-                            sendNotification(email,commentor + " comment on your post.");
+                            Log.i("COMMENTOR USERNAME", commentorUsername);
+                            sendNotification(email,commentorUsername + " comment on your post.");
                         }
                     }
                 }
@@ -239,7 +238,45 @@ public class CommentActivity extends AppCompatActivity {
                 }
             });
         }
+
+        /*else if(publisherId.equals(authorId)){
+            addReplyNotification(postId, publisherId, notifId);
+        }*/
     }
+
+    private void addReplyNotification(String postId, String publisherId, String notifId) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("notifid", notifId); //to search for delete
+        map.put("userid", publisherId);
+        map.put("text", "comment on your post.");
+        map.put("postid", postId);
+        map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
+        map.put("isPost", true);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
+        Query query = users.orderByChild("publisher");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.child("publisher").exists()) {
+                        MainActivity main = new MainActivity();
+                        String ID = snapshot.child("publisher").getValue().toString();
+                        Log.i("ADD REPLY NOTIFICATION", ID);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
     private void sendNotification(String receiver, String Message) {
         AsyncTask.execute(new Runnable() {
             @Override

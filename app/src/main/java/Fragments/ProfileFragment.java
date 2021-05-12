@@ -110,14 +110,13 @@ public class ProfileFragment extends Fragment {
         postAdapterLiked = new PhotoAdapter(getContext(), myLikedPosts);
         recyclerViewLiked.setAdapter(postAdapterLiked);
 
-        if(isConnected(getContext())){
-            userInfo();
-            getPostCount();
-            myPhotos();
-            getLikedPosts();
-        } else {
+        if(!isConnected(getContext())){
             buildDialog(getContext()).show();
         }
+        userInfo();
+        getPostCount();
+        myPhotos();
+        getLikedPosts();
 
         if (profileId.equals(fUser.getUid())) {
             editProfile.setVisibility(View.VISIBLE);
@@ -318,7 +317,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
-                Glide.with(getContext()).load(user.getImageurl()).into(imageProfile);
+                Glide.with(getContext()).load(user.getImageurl()).placeholder(R.drawable.ic_loading).into(imageProfile);
                 username.setText("@"+ user.getUsername());
                 name.setText(user.getName());
                 bio.setText(user.getBio());

@@ -55,7 +55,7 @@ public class PostDetailFragment extends Fragment {
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postList.clear();
+                //postList.clear();
                 postList.add(dataSnapshot.getValue(Post.class));
 
                 postAdapter.notifyDataSetChanged();

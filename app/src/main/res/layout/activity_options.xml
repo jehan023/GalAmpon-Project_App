@@ -17,18 +17,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/settings"
-        android:text="Settings"
+        android:text="   About Us"
         android:textColor="@color/colorPrimaryDark"
         android:layout_margin="10dp"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        app:drawableStartCompat="@drawable/ic_about" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/logout"
-        android:text="Log out"
+        app:drawableStartCompat="@drawable/ic_logout"
+        android:text="   Log out"
         android:textColor="@color/colorPrimaryDark"
         android:layout_margin="10dp"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
 </LinearLayout>

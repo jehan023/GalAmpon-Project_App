@@ -97,13 +97,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
-                        FirebaseDatabase.getInstance().getReference().child("Notification")
+                        FirebaseDatabase.getInstance().getReference().child("Notifications")
                                 .child(firebaseUser.getUid()).child(notification.getNotifid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference().child("Notification")
-                                            .child(firebaseUser.getUid()).child(notification.getNotifid()).removeValue();
                                     Toast.makeText(mContext, "Notification deleted successfully!", Toast.LENGTH_SHORT).show();
                                     Log.i("DELETE NOTIFICATION", String.valueOf(notification.getNotifid()));
                                     dialog.dismiss();

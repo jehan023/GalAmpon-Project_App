@@ -66,7 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     String likedUserId;
     String liker;
 
-    String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
+    //String currentDateTime = new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     private FirebaseUser firebaseUser;
 
@@ -514,7 +514,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private void removeNotification (String postId, String publisherId, String userId, String content){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
 
-        Query query = ref.orderByChild("postid").equalTo(postId);
+        Query query = ref.orderByChild("postid");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -552,7 +552,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         map.put("userid", firebaseUser.getUid()); //to search if exist
         map.put("text", "liked your post."); //to search if exist
         map.put("postid", postId); //to search if exist
-        map.put("datetime", currentDateTime);
+        map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
         map.put("isPost", true);
 
 

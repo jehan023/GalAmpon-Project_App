@@ -13,16 +13,16 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:src="@drawable/sidelogo"/>
+        android:src="@drawable/sidelogo" />
 
     <EditText
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/edit_text_background"
         android:layout_marginTop="15dp"
+        android:background="@drawable/edit_text_background"
         android:hint="Email"
-        android:padding="10dp"
-        android:id="@+id/email"/>
+        android:padding="10dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -34,22 +34,40 @@
         android:inputType="textPassword"
         android:id="@+id/password"/>
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
-        android:layout_marginTop="15sp"
-        android:text="LOGIN"
-        android:padding="10dp"
-        android:backgroundTint="@color/colorLogoGreen"
-        android:id="@+id/login"/>
-
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New to GalAmpon? Register"
-        android:layout_marginTop="15dp"
-        android:id="@+id/register_user"
-        android:textColor="@color/colorBlack"/>
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background"
+            android:layout_marginTop="15sp"
+            android:text="LOGIN"
+            android:padding="10dp"
+            android:backgroundTint="@color/colorLogoGreen"
+            android:id="@+id/login"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New to GalAmpon? Register"
+            android:layout_marginTop="15dp"
+            android:id="@+id/register_user"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:layout_marginTop="15dp"
+            android:id="@+id/forgot_password"
+            android:textColor="@color/colorBlack"/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

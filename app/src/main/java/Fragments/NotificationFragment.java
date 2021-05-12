@@ -63,25 +63,24 @@ public class NotificationFragment extends Fragment {
     }
 
     public void readNotifications() {
-
         FirebaseDatabase.getInstance().getReference().child("Notifications").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 notificationList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    notificationList.add(snapshot.getValue(Notification.class));
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    notificationList.add(data.getValue(Notification.class));
                 }
-
                 Collections.reverse(notificationList);
                 notificationAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
+
     }
 
     @SuppressLint("LongLogTag")
