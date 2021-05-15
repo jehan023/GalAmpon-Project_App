@@ -131,6 +131,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         Log.d("REGISTER Activity","onStop invoked");
@@ -141,5 +147,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("REGISTER Activity","onDestroy invoked");
+        finish();
     }
 }

@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email;
     private EditText password;
     private Button login;
-    private TextView registerUser;
+    private TextView registerUser, resetPassword;
 
     private FirebaseAuth mAuth;
 
@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         registerUser = findViewById(R.id.register_user);
+        resetPassword = findViewById(R.id.forgot_password);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -44,6 +45,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }
+        });
+
+        resetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
             }
         });
 
@@ -84,6 +92,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         Log.d("LOGIN Activity","onStop invoked");
@@ -94,5 +108,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("LOGIN Activity","onDestroy invoked");
+        finish();
     }
 }

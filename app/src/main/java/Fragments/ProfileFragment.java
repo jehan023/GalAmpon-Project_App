@@ -317,7 +317,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
-                Glide.with(getContext()).load(user.getImageurl()).placeholder(R.drawable.ic_loading).into(imageProfile);
+                Glide.with(getContext()).load(user.getImageurl()).placeholder(R.drawable.iconround).into(imageProfile);
                 username.setText("@"+ user.getUsername());
                 name.setText(user.getName());
                 bio.setText(user.getBio());
