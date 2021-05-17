@@ -219,14 +219,6 @@ public class MainActivity extends AppCompatActivity {
         return builder;
     }
 
-    /*@Override
-    public void onRestart() {
-        super.onRestart();
-        finish();
-        Log.i(">>> MainActivity","onRestart");
-        startActivity(getIntent());
-    }*/
-
     @Override
     protected void onPause() {
         super.onPause();

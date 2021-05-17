@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -37,6 +36,8 @@ public class HomeFragment extends Fragment {
     private PostAdapter postAdapter;
     private ArrayList<Post> postList;
     private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    public int newNotifCount;
+    public int oldNotifCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment {
 
         notificationBell = view.findViewById(R.id.notification_bell);
         notificationDot = view.findViewById(R.id.notification_dot);
+        oldNotifCount = getContext().getSharedPreferences("NOTIFICATION", Context.MODE_PRIVATE).getInt("oldNotifCount", 0);
 
         recyclerViewPosts = view.findViewById(R.id.recycler_view_posts);
         recyclerViewPosts.setHasFixedSize(true);
@@ -57,40 +59,17 @@ public class HomeFragment extends Fragment {
         recyclerViewPosts.setAdapter(postAdapter);
 
         readPost();
-        notificationDot.setVisibility(View.GONE);
-
-        notificationBell.setOnClickListener(new View.OnClickListener(){
+        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                notificationDot.setVisibility(View.GONE);
-
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.fragment_container, new NotificationFragment());
-                fragmentTransaction.addToBackStack(String.valueOf(new NotificationFragment())).commit();
-            }
-        });
-
-        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.i(">>> NOTIF onChildAdded", snapshot.getValue().toString());
-                notificationDot.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.i("onChildChanged", snapshot.getValue().toString());
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Log.i("onChildRemoved", snapshot.getValue().toString());
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                newNotifCount = (int)snapshot.getChildrenCount();
+                Log.i("OLD NOTIF COUNT", String.valueOf(oldNotifCount));
+                Log.i("NEW NOTIF COUNT", String.valueOf(newNotifCount));
+                if (newNotifCount > oldNotifCount){
+                    notificationDot.setVisibility(View.VISIBLE);
+                } else{
+                    notificationDot.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -99,19 +78,23 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        notificationBell.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                notificationDot.setVisibility(View.GONE);
+                oldNotifCount = newNotifCount;
+                getContext().getSharedPreferences("NOTIFICATION", Context.MODE_PRIVATE).edit().putInt("oldNotifCount", oldNotifCount).apply();
+                Log.i("OLD NOTIF COUNT", String.valueOf(oldNotifCount));
+                Log.i("NEW NOTIF COUNT", String.valueOf(newNotifCount));
+
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.add(R.id.fragment_container, new NotificationFragment());
+                fragmentTransaction.addToBackStack(String.valueOf(new NotificationFragment())).commit();
+            }
+        });
+
         return view;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //lastFirstVisiblePosition = ((LinearLayoutManager) recyclerViewPosts.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //((LinearLayoutManager) recyclerViewPosts.getLayoutManager()).scrollToPositionWithOffset(lastFirstVisiblePosition,0);
     }
 
     private void readPost() {
@@ -134,4 +117,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getContext().getSharedPreferences("NOTIFICATION", Context.MODE_PRIVATE).edit().putInt("oldNotifCount", oldNotifCount).apply();
+    }
 }
