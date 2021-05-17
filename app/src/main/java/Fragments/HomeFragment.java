@@ -113,7 +113,6 @@ public class HomeFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-            ;
         });
     }
 
