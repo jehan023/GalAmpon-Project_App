@@ -1,5 +1,6 @@
 package com.stejeetech.galampon;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -259,6 +260,7 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -286,6 +288,7 @@ public class PostActivity extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 imageAdded.setImageBitmap(bitmap);
                 addImage.setText("Choose other image");
+                imageAdded.setBackground(null);
             }
             catch (IOException e)
             {

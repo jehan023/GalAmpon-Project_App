@@ -187,9 +187,9 @@ public class CommentActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user.getImageurl().equals("default")) {
-                    imageProfile.setImageResource(R.mipmap.ic_launcher);
+                    imageProfile.setImageResource(R.drawable.iconround);
                 } else {
-                    Glide.with(getApplicationContext()).load(user.getImageurl()).into(imageProfile);
+                    Glide.with(getApplicationContext()).load(user.getImageurl()).placeholder(R.drawable.iconround).into(imageProfile);
                 }
                 commentorUsername = user.getUsername().toString();
             }
@@ -237,22 +237,20 @@ public class CommentActivity extends AppCompatActivity {
 
                 }
             });
-        }
-
-        /*else if(publisherId.equals(authorId)){
+        } else {
             addReplyNotification(postId, publisherId, notifId);
-        }*/
+        }
     }
 
     private void addReplyNotification(String postId, String publisherId, String notifId) {
-        HashMap<String, Object> map = new HashMap<>();
+        HashMap<String, Object> reply_map = new HashMap<>();
 
-        map.put("notifid", notifId); //to search for delete
-        map.put("userid", publisherId);
-        map.put("text", "comment on your post.");
-        map.put("postid", postId);
-        map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
-        map.put("isPost", true);
+        reply_map.put("notifid", notifId); //to search for delete
+        reply_map.put("userid", publisherId);
+        reply_map.put("text", "reply on your commented post.");
+        reply_map.put("postid", postId);
+        reply_map.put("datetime", new SimpleDateFormat("h:mma dd MMM yyyy", Locale.getDefault()).format(new Date()));
+        reply_map.put("isPost", true);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications");
         DatabaseReference users = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
@@ -260,11 +258,34 @@ public class CommentActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    if (snapshot.child("publisher").exists()) {
-                        MainActivity main = new MainActivity();
-                        String ID = snapshot.child("publisher").getValue().toString();
+                for (DataSnapshot data : snapshot.getChildren()){
+                    if (data.child("publisher").exists()) {
+                        String ID = data.child("publisher").getValue().toString();
                         Log.i("ADD REPLY NOTIFICATION", ID);
+                        if(!fUser.getUid().equals(ID)){
+                            ref.child(ID).child(notifId).setValue(reply_map);
+                            DatabaseReference receiver = FirebaseDatabase.getInstance().getReference().child("Users").child(ID);
+                            Query search = receiver.orderByChild("email");
+                            search.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        if (dataSnapshot.child("email").exists()) {
+                                            MainActivity main = new MainActivity();
+                                            String email = dataSnapshot.child("email").getValue().toString();
+                                            Log.i("RECEIVER EMAIL", email);
+                                            Log.i("COMMENTOR USERNAME", commentorUsername);
+                                            sendNotification(email,commentorUsername + " reply on your commented post.");
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
                     }
                 }
             }

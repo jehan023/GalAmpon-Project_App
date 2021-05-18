@@ -177,9 +177,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 User user = dataSnapshot.getValue(User.class);
                 if (user.getImageurl() != null){
                     if (user.getImageurl().equals("default")) {
-                        imageView.setImageResource(R.mipmap.ic_launcher);
+                        imageView.setImageResource(R.drawable.iconround);
                     } else {
-                        Glide.with(mContext).load(user.getImageurl()).into(imageView);
+                        Glide.with(mContext).load(user.getImageurl()).placeholder(R.drawable.iconround).into(imageView);
                     }
                     textView.setText(user.getUsername());
                 }

@@ -1,6 +1,7 @@
 package Adapter;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +22,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.stejeetech.galampon.MainActivity;
 import com.stejeetech.galampon.R;
@@ -73,9 +76,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
                 holder.username.setText(user.getUsername());
                 if (user.getImageurl().equals("default")) {
-                    holder.imageProfile.setImageResource(R.mipmap.ic_launcher);
+                    holder.imageProfile.setImageResource(R.drawable.iconround);
                 } else {
-                    Glide.with(mContext).load(user.getImageurl()).into(holder.imageProfile);
+                    Glide.with(mContext).load(user.getImageurl()).placeholder(R.drawable.iconround).into(holder.imageProfile);
                 }
             }
 
@@ -107,8 +110,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 if (comment.getPublisher().equals(fUser.getUid())) {
+                    final ProgressDialog pd = new ProgressDialog(mContext);
+                    pd.setMessage("Deleting comment...");
+                    pd.show();
                     AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                    alertDialog.setTitle("Do you want to delete?");
+                    alertDialog.setTitle("Do you want to delete this comment?");
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
@@ -117,11 +123,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).child(String.valueOf(comment.getCommentid())).removeValue();
+                                        removeCommentNotification(comment.getCommentid());
+                                        //FirebaseDatabase.getInstance().getReference().child("Notifications").child(authorId).child(String.valueOf(comment.getCommentid())).removeValue();
                                         Toast.makeText(mContext, "Comment deleted successfully!", Toast.LENGTH_SHORT).show();
                                         Log.i("DELETE COMMENT ID", String.valueOf(comment.getCommentid()));
                                         Log.i("DELETE POST PUB", authorId);
-                                        dialog.dismiss();
+                                        pd.dismiss();
                                     }
                                 }
                             });
@@ -141,6 +148,28 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             };
         });
 
+    }
+
+    private void removeCommentNotification(String commentID) {
+        DatabaseReference commentNotif = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        Query query = commentNotif.orderByChild(commentID);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data : snapshot.getChildren()){
+                    if (data.child(commentID).exists()){
+                        commentNotif.child(data.getKey()).child(commentID).removeValue();
+                        Log.i("DELETE COMMENT NOTIF", data.getKey().toString());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

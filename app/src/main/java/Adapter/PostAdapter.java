@@ -97,9 +97,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 User user = dataSnapshot.getValue(User.class);
 
                 if (user.getImageurl().equals("default")){
-                    holder.imageProfile.setImageResource(R.mipmap.ic_launcher_round);
+                    holder.imageProfile.setImageResource(R.drawable.iconround);
                 } else{
-                    Glide.with(mContext).load(user.getImageurl()).into(holder.imageProfile);
+                    Glide.with(mContext).load(user.getImageurl()).placeholder(R.drawable.iconround).into(holder.imageProfile);
                 }
                 holder.username.setText(user.getUsername());
             }

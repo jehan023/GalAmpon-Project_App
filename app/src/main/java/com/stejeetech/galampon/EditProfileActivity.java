@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +29,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -78,7 +78,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 name.setText(user.getName());
                 username.setText(user.getUsername());
                 bio.setText(user.getBio());
-                Picasso.get().load(user.getImageurl()).into(imageProfile);
+                if (user.getImageurl().equals("default")){
+                    imageProfile.setImageResource(R.drawable.iconround);
+                } else{
+                    Glide.with(getApplicationContext()).load(user.getImageurl()).placeholder(R.drawable.iconround).into(imageProfile);
+                }
             }
 
             @Override
