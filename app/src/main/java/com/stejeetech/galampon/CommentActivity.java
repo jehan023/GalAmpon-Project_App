@@ -59,9 +59,6 @@ public class CommentActivity extends AppCompatActivity {
     private String authorId;
     String commentid;
     String commentorUsername;
-    String commentorID;
-
-    //String currentDateTime = new SimpleDateFormat("h:mmaa dd MMM yyyy", Locale.getDefault()).format(new Date());
 
     FirebaseUser fUser;
 
@@ -152,7 +149,6 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void putComment() {
-
         HashMap<String, Object> map = new HashMap<>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
@@ -181,7 +177,6 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void getUserImage() {
-
         FirebaseDatabase.getInstance().getReference().child("Users").child(fUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -191,7 +186,7 @@ public class CommentActivity extends AppCompatActivity {
                 } else {
                     Glide.with(getApplicationContext()).load(user.getImageurl()).placeholder(R.drawable.iconround).into(imageProfile);
                 }
-                commentorUsername = user.getUsername().toString();
+                commentorUsername = user.getUsername();
             }
 
             @Override
@@ -223,7 +218,6 @@ public class CommentActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         if (dataSnapshot.child("email").exists()) {
-                            MainActivity main = new MainActivity();
                             String email = dataSnapshot.child("email").getValue().toString();
                             Log.i("RECEIVER EMAIL", email);
                             Log.i("COMMENTOR USERNAME", commentorUsername);
@@ -271,7 +265,6 @@ public class CommentActivity extends AppCompatActivity {
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
                                         if (dataSnapshot.child("email").exists()) {
-                                            MainActivity main = new MainActivity();
                                             String email = dataSnapshot.child("email").getValue().toString();
                                             Log.i("RECEIVER EMAIL", email);
                                             Log.i("COMMENTOR USERNAME", commentorUsername);

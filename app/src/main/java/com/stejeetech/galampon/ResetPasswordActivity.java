@@ -33,7 +33,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 if (!emailReset.getText().toString().equals("")){
                     resetUserPassword(emailReset.getText().toString());
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please fill the field.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please fill empty field(s).", Toast.LENGTH_SHORT).show();
                 }
             }
         });

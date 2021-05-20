@@ -141,7 +141,7 @@ public class PostDetailFragment extends Fragment {
                             removeComment(removePostId);
                             removePostLikes(removePostId);
                             removePostLikedByUser(removePostId);
-                            removeAllPostNotification(removePostId, publisherID);
+                            removeAllPostNotification(removePostId);
 
                             FirebaseDatabase.getInstance().getReference().child("Posts")
                                     .child(postId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -325,38 +325,52 @@ public class PostDetailFragment extends Fragment {
         });
     }
 
-    private void removeAllPostNotification(String postId, String publisherId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(publisherId);
-
-        Query query = ref.orderByChild("postid").equalTo(postId);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void removeAllPostNotification(String postId) {
+        DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        if(data.child("postid").exists()) {
-                            if(data.child("postid").getValue().toString().equals(postId)) {
-                                existNotifId = data.getRef().getKey().toString();
-                                Log.i("REMOVE NOTIF DATA", existNotifId);
-                                ref.child(existNotifId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @SuppressLint("LongLogTag")
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // File deleted successfully
-                                        Log.d("DELETE POST NOTIFICATIONS", existNotifId);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot user : snapshot.getChildren()){
+                    String UserNotification = user.getKey();
+                    Log.i("Notification User:", user.getKey());
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Notifications").child(UserNotification);
+                    Query query = ref.orderByChild("postid").equalTo(postId);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                    if(data.child("postid").exists()) {
+                                        if(data.child("postid").getValue().toString().equals(postId)) {
+                                            existNotifId = data.getRef().getKey();
+                                            Log.i("REMOVE NOTIF DATA", existNotifId);
+                                            ref.child(existNotifId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @SuppressLint("LongLogTag")
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // File deleted successfully
+                                                    Log.d("DELETE POST NOTIFICATIONS", existNotifId);
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @SuppressLint("LongLogTag")
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    // Uh-oh, an error occurred!
+                                                    Log.d("DELETE POST NOTIFICATIONS", "onFailure: did not delete file");
+                                                }
+                                            });
+                                        }
                                     }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @SuppressLint("LongLogTag")
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Uh-oh, an error occurred!
-                                        Log.d("DELETE POST NOTIFICATIONS", "onFailure: did not delete file");
-                                    }
-                                });
+                                }
+
                             }
                         }
-                    }
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 
@@ -489,7 +503,6 @@ public class PostDetailFragment extends Fragment {
                             }
                         }
                     }
-
                 }
             }
 
@@ -534,7 +547,6 @@ public class PostDetailFragment extends Fragment {
             });
 
             // GET THE PUBLISHER'S EMAIL
-
             DatabaseReference receiver = FirebaseDatabase.getInstance().getReference().child("Users").child(publisherId);
             Query query = receiver.orderByChild("email");
             query.addListenerForSingleValueEvent(new ValueEventListener() {
