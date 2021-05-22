@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.stejeetech.galampon.MainActivity;
 import com.stejeetech.galampon.R;
 
 import java.util.List;
@@ -88,36 +86,38 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
-        holder.comment.setOnClickListener(new View.OnClickListener() {
+        /*holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, MainActivity.class);
                 intent.putExtra("publisherId", comment.getPublisher());
+                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", comment.getPublisher()).apply();
                 mContext.startActivity(intent);
             }
-        });
+        });*/
 
-        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
+        /*holder.imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, MainActivity.class);
                 intent.putExtra("publisherId", comment.getPublisher());
+                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", comment.getPublisher()).apply();
                 mContext.startActivity(intent);
             }
-        });
+        });*/
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 if (comment.getPublisher().equals(fUser.getUid())) {
-                    final ProgressDialog pd = new ProgressDialog(mContext);
-                    pd.setMessage("Deleting comment...");
-                    pd.show();
                     AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                     alertDialog.setTitle("Do you want to delete this comment?");
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
+                            final ProgressDialog pd = new ProgressDialog(mContext);
+                            pd.setMessage("Deleting comment...");
+                            pd.show();
                             FirebaseDatabase.getInstance().getReference().child("Comments")
                                     .child(postId).child(String.valueOf(comment.getCommentid())).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

@@ -1,6 +1,7 @@
 package Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -135,6 +136,9 @@ public class PostDetailFragment extends Fragment {
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
+                            final ProgressDialog pd = new ProgressDialog(getContext());
+                            pd.setMessage("Post Deleting...");
+                            pd.show();
 
                             removeOnStorage(postImageUrl);
                             removeOnReport(removePostId);
@@ -149,7 +153,8 @@ public class PostDetailFragment extends Fragment {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(getContext(), "Post deleted successfully!", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
+                                        pd.dismiss();
+                                        getFragmentManager().popBackStackImmediate();
                                     }
                                 }
                             });

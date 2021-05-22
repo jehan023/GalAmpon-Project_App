@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -70,7 +71,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.postImage.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.imageProfile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
+                        .edit().putString("profileId", notification.getUserid()).apply();
+
+                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
+            }
+        });
+
+        holder.itemView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (notification.isIsPost()) {

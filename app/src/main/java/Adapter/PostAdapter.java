@@ -236,7 +236,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         .edit().putString("profileId", post.getPublisher()).apply();
 
                 ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment()).commit();
+                        .replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
             }
         });
 

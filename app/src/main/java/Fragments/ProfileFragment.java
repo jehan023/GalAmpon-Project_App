@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -159,8 +158,9 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", fUser.getUid()).apply();
-                    ((FragmentActivity)getContext()).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new HomeFragment()).commit();
+                    /*((FragmentActivity)getContext()).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new HomeFragment()).commit();*/
+                    getFragmentManager().popBackStackImmediate();
                     Log.i(">>> ProfileFragment", "Closed");
                 }
             });
