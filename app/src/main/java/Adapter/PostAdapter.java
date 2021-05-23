@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -41,6 +40,7 @@ import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.R;
 import com.stejeetech.galampon.ViewImageActivity;
+import com.stejeetech.galampon.ViewOtherUserActivity;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import Fragments.ProfileFragment;
 import Model.Post;
 import Model.User;
 
@@ -232,22 +231,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
-                        .edit().putString("profileId", post.getPublisher()).apply();
-
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
+                Intent intent = new Intent(mContext, ViewOtherUserActivity.class);
+                intent.putExtra("profileId", post.getPublisher());
+                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", post.getPublisher()).apply();
+                mContext.startActivity(intent);
             }
         });
 
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE)
-                        .edit().putString("profileId", post.getPublisher()).apply();
-
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment()).commit();
+                Intent intent = new Intent(mContext, ViewOtherUserActivity.class);
+                intent.putExtra("profileId", post.getPublisher());
+                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", post.getPublisher()).apply();
+                mContext.startActivity(intent);
             }
         });
 

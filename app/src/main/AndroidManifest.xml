@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Galampon">
 
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCUisley3m6vaU0DXdRn74JmnbBvtF9ppU" />
@@ -29,6 +30,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ViewImageActivity" />
+        <activity android:name=".ViewOtherUserActivity" />
         <activity android:name=".GoogleMapsActivity" />
         <activity android:name=".OptionsActivity" />
         <activity android:name=".EditProfileActivity" />

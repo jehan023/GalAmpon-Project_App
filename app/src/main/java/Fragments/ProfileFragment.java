@@ -75,14 +75,10 @@ public class ProfileFragment extends Fragment {
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        String data = getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
-        if (data.equals("none")) {
-            profileId = fUser.getUid();
-        } else {
-            profileId = data;
-            getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().clear().apply();
+        profileId = getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
+        if (profileId.equals("none")) {
+            profileId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("profileId", "none");
         }
-        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
 
         imageProfile = view.findViewById(R.id.image_profile);
         options = view.findViewById(R.id.options);
@@ -120,8 +116,9 @@ public class ProfileFragment extends Fragment {
         if (profileId.equals(fUser.getUid())) {
             editProfile.setVisibility(View.VISIBLE);
         } else {
-            editProfile.setVisibility(View.INVISIBLE);
-            likedPictures.setVisibility(View.INVISIBLE);
+            options.setVisibility(View.GONE);
+            editProfile.setVisibility(View.GONE);
+            likedPictures.setVisibility(View.GONE);
             myPictures.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             postCount.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         }
@@ -145,27 +142,12 @@ public class ProfileFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
         recyclerViewLiked.setVisibility(View.GONE);
 
-        if (profileId.equals(fUser.getUid())) {
-            options.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(getContext(), OptionsActivity.class));
-                }
-            });
-        } else {
-            options.setImageResource(R.drawable.ic_close);
-            options.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", fUser.getUid()).apply();
-                    /*((FragmentActivity)getContext()).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new HomeFragment()).commit();*/
-                    getFragmentManager().popBackStackImmediate();
-                    Log.i(">>> ProfileFragment", "Closed");
-                }
-            });
-        }
-
+        options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), OptionsActivity.class));
+            }
+        });
 
         myPictures.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,12 +318,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
         Log.i(">>> ProfileFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
         Log.i(">>> ProfileFragment", "ON DESTROY VIEW");
     }
 }

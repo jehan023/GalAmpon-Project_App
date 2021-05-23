@@ -41,6 +41,7 @@ import com.stejeetech.galampon.CommentActivity;
 import com.stejeetech.galampon.MainActivity;
 import com.stejeetech.galampon.R;
 import com.stejeetech.galampon.ViewImageActivity;
+import com.stejeetech.galampon.ViewOtherUserActivity;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -56,7 +57,7 @@ import Model.User;
 
 public class PostDetailFragment extends Fragment {
 
-    private String postId, profileID, publisherID, postImageUrl;
+    private String postId, profileId, publisherID, postImageUrl;
     private ImageView close, imageProfile, postImage, more, like, comment;
     private TextView username, date, location, noOfLikes, noOfComments;
     SocialTextView description;
@@ -74,7 +75,7 @@ public class PostDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
 
         postId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("postid", "none");
-        profileID = getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
+        profileId = getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
 
         close = view.findViewById(R.id.close);
         more = view.findViewById(R.id.more);
@@ -110,7 +111,6 @@ public class PostDetailFragment extends Fragment {
             }
         });
 
-        //getUserInfo();
         isLiked(postId, like);
         noOfLikes(postId, noOfLikes);
         getComments(postId, noOfComments);
@@ -118,6 +118,7 @@ public class PostDetailFragment extends Fragment {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
                 getFragmentManager().popBackStackImmediate();
                 Log.i(">>> PostDetailFragment", "Closed");
             }
@@ -220,6 +221,15 @@ public class PostDetailFragment extends Fragment {
                         removeNotification(postId, publisherID, firebaseUser.getUid(), "liked your post.");
                     }
                 }
+            }
+        });
+
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ViewOtherUserActivity.class);
+                intent.putExtra("profileId", publisherID);
+                getContext().startActivity(intent);
             }
         });
 
@@ -640,14 +650,14 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
         Log.i(">>> PostDetailFragment","ON STOP");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileID).apply();
+        getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", profileId).apply();
         Log.i(">>> PostDetailFragment", "ON DESTROY VIEW");
     }
 }

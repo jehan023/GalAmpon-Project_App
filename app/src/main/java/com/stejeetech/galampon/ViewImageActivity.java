@@ -122,28 +122,10 @@ public class ViewImageActivity extends AppCompatActivity {
     }
 
     private void getPostImage() {
-        /*FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                Post post = snapshot.getValue(Post.class);
-                publisherId = post.getPublisher();
-                if (post.getImageurl().equals("default")){
-                    postImage.setImageResource(R.mipmap.ic_launcher_round);
-                } else{
-                    Glide.with(getApplicationContext()).load(post.getImageurl()).into(postImage);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
         if (imageUrl.equals("default")){
-            postImage.setImageResource(R.mipmap.ic_launcher_round);
+            postImage.setImageResource(R.drawable.ic_loading);
         } else{
-            Glide.with(getApplicationContext()).load(imageUrl).into(postImage);
+            Glide.with(getApplicationContext()).load(imageUrl).placeholder(R.drawable.ic_loading).into(postImage);
         }
 
 

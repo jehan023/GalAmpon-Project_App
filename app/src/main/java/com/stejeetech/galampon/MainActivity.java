@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -116,12 +117,23 @@ public class MainActivity extends AppCompatActivity {
             profileId = intent.getString("publisherId");
 
             getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", profileId).apply();
-            //getSharedPreferences("PROFILE", MODE_PRIVATE).edit().putString("profileId", firebaseUser.getUid()).apply();
 
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
             bottomNavigationView.setSelectedItemId(R.id.nav_profile);
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+            Log.i(">>> MainActivity", "FINISH");
+            Toast.makeText(getApplicationContext(), "App exit.", Toast.LENGTH_SHORT).show();
+        } else {
+            getSharedPreferences("PROFILE", Context.MODE_PRIVATE).getString("profileId", "none");
+            getSupportFragmentManager().popBackStack();
         }
     }
 
@@ -222,11 +234,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        finish();
     }
 }

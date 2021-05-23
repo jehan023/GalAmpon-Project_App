@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.stejeetech.galampon.R;
+import com.stejeetech.galampon.ViewOtherUserActivity;
 
 import java.util.List;
 
@@ -86,25 +88,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
-        /*holder.comment.setOnClickListener(new View.OnClickListener() {
+        holder.imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra("publisherId", comment.getPublisher());
+                Intent intent = new Intent(mContext, ViewOtherUserActivity.class);
+                intent.putExtra("profileId", comment.getPublisher());
                 mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", comment.getPublisher()).apply();
                 mContext.startActivity(intent);
             }
-        });*/
-
-        /*holder.imageProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra("publisherId", comment.getPublisher());
-                mContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", comment.getPublisher()).apply();
-                mContext.startActivity(intent);
-            }
-        });*/
+        });
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

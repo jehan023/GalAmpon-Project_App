@@ -49,11 +49,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                     mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit().putString("profileId", post.getPublisher()).apply();
 
                     ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(null).commit();
+                            .replace(R.id.fragment_container, new PostDetailFragment()).addToBackStack(String.valueOf(PostDetailFragment.class)).commit();
                 }
             }
         });
-
     }
 
     @Override
@@ -67,7 +66,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             postImage = itemView.findViewById(R.id.post_image);
         }
     }

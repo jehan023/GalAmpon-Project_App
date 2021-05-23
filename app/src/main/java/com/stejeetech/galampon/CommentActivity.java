@@ -115,16 +115,10 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(">>> CommentActivity","onStop invoked");
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.i("CommentActivity", "FINISH");
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(">>> CommentActivity","onDestroy invoked");
     }
 
     private void getComment() {
